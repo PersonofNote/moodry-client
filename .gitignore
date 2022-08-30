@@ -43,10 +43,6 @@ amplifytools.xcconfig
 **.sample
 #amplify-do-not-edit-end
 
-amplify/
-src/graphql/
-src/models/
-src/views/
 .eslintignore
 .graphqlconfig.yml
 .vscode/

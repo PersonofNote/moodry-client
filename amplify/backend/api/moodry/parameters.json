@@ -1,0 +1,6 @@
+{
+  "AppSyncApiName": "moodry",
+  "DynamoDBBillingMode": "PAY_PER_REQUEST",
+  "DynamoDBEnableServerSideEncryption": false,
+  "AuthModeLastUpdated": "2022-08-28T19:14:54.658Z"
+}
