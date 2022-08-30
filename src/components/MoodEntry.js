@@ -10,7 +10,7 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
     return(
     <>
         <Grid item sx={{ mb: 1.25 }}>
-        <Grid container xs={12}>
+        <Grid container>
         <Grid item xs={12}>
             <h2> How are you feeling? </h2>
         </Grid>

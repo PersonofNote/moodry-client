@@ -12,7 +12,7 @@ import { Grid, Button, Box } from '@mui/material';
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
-    const [noteValue, setNoteValue] = useState(null)
+    const [noteValue, setNoteValue] = useState('')
 
     const onNoteChange = e => {
         console.log(e.target.value)
@@ -23,7 +23,7 @@ function Dashboard({user}) {
         try {
         const apiData = await API.graphql({ query: listMoods });
         // TODO: finish sorting data by timestamp; currently causing a re-render for each iteration.
-        // Need to process without hitting UseEffect every time
+        // Need to process without hitting UseEffect every time. Will this need a backend-as-middleware?
         /*
         console.log(apiData.data.listMoods.items.length)
         const filteredData = (apiData.data.listMoods.items.filter(item => !item._deleted))
@@ -78,7 +78,8 @@ function Dashboard({user}) {
             if (_deleted) {
                 return null
             }
-            return <Box sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{createdAt}:</Box> <Box sx={{color: `${moodColors[value]}`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `40%`}} className='box-item-ams' item>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
+            const date = new Date(createdAt).toDateString()
+            return <Box sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
         });
         return moodsArray;
     }
@@ -90,9 +91,9 @@ function Dashboard({user}) {
     <main>
         <div className="content">
         <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
-        <ul className="moods-list">
+        <div className="moods-list">
             {moods}
-        </ul>
+        </div>
         {error && (
             <div>{error}</div>
         )}
