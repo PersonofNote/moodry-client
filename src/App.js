@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import { Link } from "react-router-dom";
+import MoodryLogo from './components/logo.svg'
 import './App.css';
 // AWS stuff
 import { Amplify, Auth, Hub, API, graphqlOperation } from 'aws-amplify';
@@ -25,8 +25,6 @@ function App() {
   const [showCodeField, setShowCodeField] = useState(false);
   const [view, setView] = useState('signup')
 
-  // const handleSubmit = () => console.log(codeValue);
-
   const renderError = (error) => {
     return Object.keys(error).map((key, index) => {
       return (
@@ -41,13 +39,15 @@ function App() {
     })
   }
 
+  // Consider refactor, as this just switches between login and signup. Break out?
   const switchView = e => {
-    console.log(e)
-    console.log(e.target.value)
     setView(e.target.value)
  }
   
-  useEffect(() => {
+ // Straight from https://docs.amplify.aws/lib/auth/auth-events/q/platform/js/
+ // Not sure I 100% understand exactly what's going on here with 'congnitoHostedUI'
+ // The code works but I see some redundancies
+ useEffect(() => {
     Hub.listen('auth', ({ payload: { event, data } }) => {
       switch (event) {
         case 'signIn':
@@ -67,6 +67,7 @@ function App() {
 
     getUser().then(userData => setUser(userData));
   }, []);
+  
 
   function getUser() {
     return Auth.currentAuthenticatedUser()
@@ -77,8 +78,7 @@ function App() {
   const signUp = async (username, password) => {
     try {
       const { user } = await Auth.signUp({ username, password });
-      console.log("USER")
-      console.log(user)
+      // second stage of signup; check if Amplify has a pre-rolled solution to this
       setShowCodeField(true)
   } catch (error) {
       console.log('error signing up:', error);
@@ -87,7 +87,6 @@ function App() {
   }
 
   const confirmSignup = async (username, code) => {
-    console.log("CONFIRMING")
     try {
       await Auth.confirmSignUp(username, code);
       setError("Success! You can now log in")
@@ -120,6 +119,7 @@ function App() {
     <div className="App">
       <header className="App-header">
       <nav>
+        <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" />
         {user && <Button onClick={() => Auth.signOut()}>Sign Out</Button>}
         </nav>
       </header>

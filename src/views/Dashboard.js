@@ -1,10 +1,13 @@
-import {useEffect, useState, Children} from 'react';
-import { Amplify, API, graphqlOperation } from 'aws-amplify';
+import { useEffect, useState } from 'react';
+import { API } from 'aws-amplify';
 import { errorMessages, moodTextMapping } from '../constants'
 import { listMoods } from '../graphql/queries';
 import * as mutations from '../graphql/mutations';
 import MoodEntryModule from '../components/MoodEntry'
 import '../styles/dashboard.css';
+
+// MUI
+import Button from '@mui/material/Button';
 
 function Dashboard({user}) {
     const [error, setError] = useState(null);
@@ -13,7 +16,8 @@ function Dashboard({user}) {
     const fetchMoods = async () => {
         try {
         const apiData = await API.graphql({ query: listMoods });
-        // TODO: finish sorting data by timestamp; currently causing a re-render for each iteration
+        // TODO: finish sorting data by timestamp; currently causing a re-render for each iteration.
+        // Need to process without hitting UseEffect every time
         /*
         console.log(apiData.data.listMoods.items.length)
         const filteredData = (apiData.data.listMoods.items.filter(item => !item._deleted))
@@ -30,8 +34,7 @@ function Dashboard({user}) {
     }
     
     const handleMoodClick = async e => {
-        try {
-        console.log(e.currentTarget.value)
+        try { 
         const moodData = {value: e.currentTarget.value, note: null, usersID: user.username }
         addMood(moodData)
         }
@@ -55,21 +58,20 @@ function Dashboard({user}) {
                 setError(errorMessages[error.name])
             }
     }
-
-      
+   
     useEffect(() => {
         fetchMoods();
       }, [handleMoodClick, handleDeleteMood]);
   
 
     const renderMood = (moodsList) => {
-        // KEYS: {id, value, note, usersID, createdAt, updatedAt, _version, _deleted, _lastChangedAt}
+        // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt, _version, _deleted, _lastChangedAt}
         const moodsArray = Object.keys(moodsList).map(key => {
             const { id, value, note, createdAt, _version, _deleted } = moodsList[key];
             if (_deleted) {
                 return null
             }
-            return <li value={`moods-${key}`}>{createdAt}: {moodTextMapping[value]} {note && (note)} <button onClick={handleDeleteMood} value={[id, _version]}>Delete</button></li>
+            return <li value={`moods-${key}`}>{createdAt}: {moodTextMapping[value]} {note && (note)} <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button></li>
         });
         return moodsArray;
     }
@@ -88,7 +90,7 @@ function Dashboard({user}) {
             <div>{error}</div>
         )}
         </div>
-        <div className="ad">Ad goes here</div>
+        <div className="ad">Ad goes here for non-premium users</div>
     </main>
   );
 }

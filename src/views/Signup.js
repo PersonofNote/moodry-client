@@ -1,15 +1,16 @@
-import {useEffect, useState, Children} from 'react';
-import { Amplify, Auth} from 'aws-amplify';
+import {useState} from 'react';
 import '../styles/dashboard.css';
 
 // MUI
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
+// TODO: add visibility toggle to password
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 function Signup({signUp, switchView, confirmSignup, showCodeField}) {
+    // TODO: consider refactor to use a single form state object
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [codeValue, setCodeValue] = useState("");
