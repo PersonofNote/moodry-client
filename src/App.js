@@ -14,7 +14,8 @@ import Button from '@mui/material/Button';
 
 // App components
 import Dashboard from './views/Dashboard';
-import SigninView from './views/Dashboard'
+import Signup from './views/Signup'
+import Signin from './views/Signin'
 
 import { errorMessages } from './constants'
 
@@ -23,9 +24,7 @@ function App() {
   const [error, setError] = useState(null);
   const [showCodeField, setShowCodeField] = useState(false);
   const [view, setView] = useState('signup')
-  const [codeValue, setCodeValue] = useState("");
 
-  const onTextChange = (e) => setCodeValue(e.target.value);
   // const handleSubmit = () => console.log(codeValue);
 
   const renderError = (error) => {
@@ -43,7 +42,9 @@ function App() {
   }
 
   const switchView = e => {
-    console.log(e.currentTarget.value)
+    console.log(e)
+    console.log(e.target.value)
+    setView(e.target.value)
  }
   
   useEffect(() => {
@@ -59,6 +60,7 @@ function App() {
         case 'signIn_failure':
         case 'cognitoHostedUI_failure':
           console.log('Sign in failure', data);
+          setError(data)
           break;
       }
     });
@@ -75,6 +77,8 @@ function App() {
   const signUp = async (username, password) => {
     try {
       const { user } = await Auth.signUp({ username, password });
+      console.log("USER")
+      console.log(user)
       setShowCodeField(true)
   } catch (error) {
       console.log('error signing up:', error);
@@ -82,10 +86,11 @@ function App() {
   }
   }
 
-  const confirmSignUp = async (username, code) => {
+  const confirmSignup = async (username, code) => {
+    console.log("CONFIRMING")
     try {
       await Auth.confirmSignUp(username, code);
-      setError({"Success": "Sign up confirmed"})
+      setError("Success! You can now log in")
     } catch (error) {
         console.log('error confirming sign up', error);
         setError(errorMessages[error.name])
@@ -114,12 +119,7 @@ function App() {
     
     <div className="App">
       <header className="App-header">
-      <nav
-        style={{
-          borderBottom: "solid 1px",
-          paddingBottom: "1rem",
-        }}
-        >
+      <nav>
         {user && <Button onClick={() => Auth.signOut()}>Sign Out</Button>}
         </nav>
       </header>
@@ -129,18 +129,8 @@ function App() {
         <Dashboard user={user} />
       ) : (
         <>
-        <Button onClick={() => signIn("jessicaleetaylormartin@gmail.com", "Test@12345")} > Sign In </Button>
-        <Button onClick={() => signUp("jessicaleetaylormartin@gmail.com", "Test@12345")} > Sign Up </Button>
-        {showCodeField && (
-          <>
-        <TextField
-        onChange={onTextChange}
-        value={codeValue}
-        label={"Enter Code"} //optional
-      />
-        <Button onClick={() => confirmSignUp("jessicaleetaylormartin@gmail.com", codeValue)} > Confirm Sign Up </Button>
-        </>
-        )}
+        {view === 'signup' ? <Signup signUp={signUp} showCodeField={showCodeField} confirmSignup={confirmSignup} switchView={switchView} /> : <Signin signIn={signIn} switchView={switchView} />}
+        
         </>
       )}
       {error && (

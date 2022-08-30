@@ -9,33 +9,32 @@ const MoodEntryModule = ({ user, handleMoodClick }) => {
 
     return(
     <>
-
-<Grid item sx={{ mb: 1.25 }}>
-<Grid container xs={12}>
-<Grid item xs={12}>
-    <h2> How are you feeling? </h2>
-</Grid>
-<Grid container xs={12} md={6} justifyContent="flex-start">
-    <IconButton 
-        color="inherit" 
-        size="large"
-        value={1}
-        onClick={handleMoodClick}>
-        <SentimentDissatisfiedIcon
-            size={48}
-            strokeWidth={2}
-            color={'red'}
-        />
-    </IconButton>
+        <Grid item sx={{ mb: 1.25 }}>
+        <Grid container xs={12}>
+        <Grid item xs={12}>
+            <h2> How are you feeling? </h2>
+        </Grid>
+        <Grid container justifyContent="center">
             <IconButton 
-                color="inherit" 
+                color="inherit"
+                size="large"
+                value={1}
+                onClick={handleMoodClick}>
+                <SentimentDissatisfiedIcon
+                    size={64}
+                    strokeWidth={2}
+                    style={{ fill: 'red'}}
+                />
+            </IconButton>
+            <IconButton 
+                color="inherit"
                 size="large"
                 value={2}
                 onClick={handleMoodClick}>
                 <SentimentNeutralIcon
                     size={48}
                     strokeWidth={2}
-                    color={'orange'}
+                    style={{ fill: 'orange' }}
                 />
             </IconButton>
             <IconButton 
@@ -46,13 +45,13 @@ const MoodEntryModule = ({ user, handleMoodClick }) => {
                 <SentimentSatisfiedAltIcon
                     size={48}
                     strokeWidth={2}
-                    color={'green'}
+                    style={{ fill: 'green' }}
                 />
             </IconButton>
-</Grid>
-</Grid>
-</Grid>
-</>
+        </Grid>
+        </Grid>
+        </Grid>
+        </>
 )
 };
 

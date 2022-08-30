@@ -1,0 +1,42 @@
+main {
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    width: 100%;
+    min-height: 60vh;
+}
+
+.ad {
+    width: 100%;
+    padding: 0;
+    border-left: 1px dashed slategray
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 750px;
+    margin: auto;
+    height: 300px;
+    justify-content: space-evenly;
+}
+
+
+
+@media screen and (min-width: 735px) {
+    main {
+    flex-direction: row;
+    }
+
+    .content {
+        width: 80%;
+    }
+    
+    .ad {
+        max-width: 20%;
+        padding-top: 250px;
+    }
+
+}
