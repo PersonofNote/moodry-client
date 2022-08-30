@@ -12,6 +12,7 @@ import { Grid, Button, Box } from '@mui/material';
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
+    const [showMoods, setShowMoods] = useState(false)
     const [noteValue, setNoteValue] = useState('')
 
     const onNoteChange = e => {
@@ -79,8 +80,9 @@ function Dashboard({user}) {
                 return null
             }
             const date = new Date(createdAt).toDateString()
-            return <Box sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
+            return <Box className="box-item-ams" sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
         });
+        console.log(moodsArray)
         return moodsArray;
     }
     
@@ -91,9 +93,12 @@ function Dashboard({user}) {
     <main>
         <div className="content">
         <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
+        <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
+        {showMoods &&(
         <div className="moods-list">
             {moods}
         </div>
+        )}
         {error && (
             <div>{error}</div>
         )}
