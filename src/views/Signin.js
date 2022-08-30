@@ -1,10 +1,10 @@
-import {useEffect, useState, Children} from 'react';
-import { Amplify, Auth} from 'aws-amplify';
+import {useState} from 'react';
 import '../styles/dashboard.css';
 
 // MUI
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
+// TODO: implement password visibility toggle
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
@@ -35,7 +35,7 @@ function Signin({signIn, switchView}) {
             value={password}
             label={"Enter Password"} 
         />
-            <Button onClick={() => signIn(email, password)} > Sign In</Button>
+            <Button onClick={() => signIn(email, password)}> Sign In</Button>
         <Button value="signup" onClick={switchView}> Sign Up </Button>
         </div>
     </main>

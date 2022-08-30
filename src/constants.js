@@ -17,3 +17,10 @@ export const moodTextMapping = {
     2: 'Neutral',
     3: 'Good'
 }
+
+// Todo: decide on more pleasing colors
+export const moodColors = {
+    1: 'red',
+    2: 'orange',
+    3: 'green'
+}

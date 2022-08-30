@@ -1,10 +1,10 @@
 import {useState} from 'react';
-import { Grid, IconButton } from '@mui/material';
+import { Grid, IconButton, TextField } from '@mui/material';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 
-const MoodEntryModule = ({ user, handleMoodClick }) => {
+const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
     const [error, setError] = useState(null);
 
     return(
@@ -16,12 +16,12 @@ const MoodEntryModule = ({ user, handleMoodClick }) => {
         </Grid>
         <Grid container justifyContent="center">
             <IconButton 
+                className="icon-button-ams"
                 color="inherit"
                 size="large"
                 value={1}
                 onClick={handleMoodClick}>
                 <SentimentDissatisfiedIcon
-                    size={64}
                     strokeWidth={2}
                     style={{ fill: 'red'}}
                 />
@@ -32,7 +32,6 @@ const MoodEntryModule = ({ user, handleMoodClick }) => {
                 value={2}
                 onClick={handleMoodClick}>
                 <SentimentNeutralIcon
-                    size={48}
                     strokeWidth={2}
                     style={{ fill: 'orange' }}
                 />
@@ -43,12 +42,17 @@ const MoodEntryModule = ({ user, handleMoodClick }) => {
                 value={3}
                 onClick={handleMoodClick}>
                 <SentimentSatisfiedAltIcon
-                    size={48}
                     strokeWidth={2}
                     style={{ fill: 'green' }}
                 />
             </IconButton>
         </Grid>
+        <Grid container justifyContent="center">
+        <TextField
+            onChange={e => handleNote(e)}
+            value={noteValue}
+            label={"Enter Note (Optional)"} 
+        /></Grid>
         </Grid>
         </Grid>
         </>

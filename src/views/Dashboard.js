@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
 import { API } from 'aws-amplify';
-import { errorMessages, moodTextMapping } from '../constants'
+import { errorMessages, moodTextMapping, moodColors } from '../constants'
 import { listMoods } from '../graphql/queries';
 import * as mutations from '../graphql/mutations';
 import MoodEntryModule from '../components/MoodEntry'
 import '../styles/dashboard.css';
 
 // MUI
-import Button from '@mui/material/Button';
+import { Grid, Button, Box } from '@mui/material';
 
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
+    const [noteValue, setNoteValue] = useState(null)
+
+    const onNoteChange = e => {
+        console.log(e.target.value)
+        setNoteValue(e.target.value);
+    }
 
     const fetchMoods = async () => {
         try {
@@ -35,8 +41,9 @@ function Dashboard({user}) {
     
     const handleMoodClick = async e => {
         try { 
-        const moodData = {value: e.currentTarget.value, note: null, usersID: user.username }
+        const moodData = {value: e.currentTarget.value, note: noteValue, usersID: user.username }
         addMood(moodData)
+        setNoteValue('')
         }
         catch (error) {
             console.log('error', error);
@@ -71,7 +78,7 @@ function Dashboard({user}) {
             if (_deleted) {
                 return null
             }
-            return <li value={`moods-${key}`}>{createdAt}: {moodTextMapping[value]} {note && (note)} <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button></li>
+            return <Box sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{createdAt}:</Box> <Box sx={{color: `${moodColors[value]}`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `40%`}} className='box-item-ams' item>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
         });
         return moodsArray;
     }
@@ -82,7 +89,7 @@ function Dashboard({user}) {
   return (
     <main>
         <div className="content">
-        <MoodEntryModule user={user} handleMoodClick={handleMoodClick}/>
+        <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
         <ul className="moods-list">
             {moods}
         </ul>

@@ -27,6 +27,12 @@ main {
     list-style: none;
 }
 
+.box-item-ams {
+    display: flex;
+    align-items: center;
+    width: 25%;
+}
+
 
 
 @media screen and (min-width: 735px) {
