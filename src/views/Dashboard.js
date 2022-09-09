@@ -3,11 +3,15 @@ import { API } from 'aws-amplify';
 import { errorMessages, moodTextMapping, moodColors } from '../constants'
 import { listMoods } from '../graphql/queries';
 import * as mutations from '../graphql/mutations';
-import MoodEntryModule from '../components/MoodEntry'
+
 import '../styles/dashboard.css';
 
+// Components
+import MoodEntryModule from '../components/MoodEntry'
+import MoodLineChart from '../components/LineChart';
+
 // MUI
-import { Grid, Button, Box } from '@mui/material';
+import { Button, Box } from '@mui/material';
 
 function Dashboard({user}) {
     const [error, setError] = useState(null);
@@ -74,15 +78,14 @@ function Dashboard({user}) {
 
     const renderMood = (moodsList) => {
         // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt, _version, _deleted, _lastChangedAt}
-        const moodsArray = Object.keys(moodsList).map(key => {
+        const moodsArray = Object.keys(moodsList).map((key, index) => {
             const { id, value, note, createdAt, _version, _deleted } = moodsList[key];
             if (_deleted) {
                 return null
             }
             const date = new Date(createdAt).toDateString()
-            return <Box className="box-item-ams" sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
+            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
         });
-        console.log(moodsArray)
         return moodsArray;
     }
     
@@ -99,6 +102,11 @@ function Dashboard({user}) {
             {moods}
         </div>
         )}
+        <br/>
+        <h2>Below this line is experimental stuff</h2>
+        <div className="chart-container">
+            <MoodLineChart />
+        </div>
         {error && (
             <div>{error}</div>
         )}
