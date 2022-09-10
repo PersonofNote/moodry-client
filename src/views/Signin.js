@@ -35,7 +35,7 @@ function Signin({signIn, switchView}) {
             value={password}
             label={"Enter Password"} 
         />
-            <Button onClick={() => signIn(email, password)}> Sign In</Button>
+            <Button variant="contained" onClick={() => signIn(email, password)}> Sign In</Button>
         <Button value="signup" onClick={switchView}> Sign Up </Button>
         </div>
     </main>

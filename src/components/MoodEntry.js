@@ -23,27 +23,29 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
                 onClick={handleMoodClick}>
                 <SentimentDissatisfiedIcon
                     strokeWidth={2}
-                    style={{ fill: 'red'}}
+                    style={{ fill: 'red', height: '100%', width: '100%'}}
                 />
             </IconButton>
-            <IconButton 
+            <IconButton
+                className="icon-button-ams"
                 color="inherit"
                 size="large"
                 value={2}
                 onClick={handleMoodClick}>
                 <SentimentNeutralIcon
                     strokeWidth={2}
-                    style={{ fill: 'orange' }}
+                    style={{ fill: 'orange', height: '100%', width: '100%' }}
                 />
             </IconButton>
-            <IconButton 
+            <IconButton
+                className="icon-button-ams" 
                 color="inherit" 
                 size="large"
                 value={3}
                 onClick={handleMoodClick}>
                 <SentimentSatisfiedAltIcon
                     strokeWidth={2}
-                    style={{ fill: 'green' }}
+                    style={{ fill: 'green', height: '100%', width: '100%' }}
                 />
             </IconButton>
         </Grid>

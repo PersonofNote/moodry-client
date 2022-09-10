@@ -19,10 +19,10 @@ TODO: Tweak gradients to include more blues/greens -->
     </linearGradient>
     <linearGradient id="linearColors5" x1="0.5" y1="1" x2="0.5" y2="0">
        <stop offset="0%" stop-color="#9B004A"></stop>
-       <stop offset="100%" stop-color="#7D0022"></stop>
+       <stop offset="100%" stop-color="#00a7e4"></stop>
     </linearGradient>
     <linearGradient id="linearColors6" x1="0" y1="1" x2="1" y2="0">
-       <stop offset="0%" stop-color="#7D0022"></stop>
+       <stop offset="0%" stop-color="#00a7e4"></stop>
        <stop offset="100%" stop-color="#01E400"></stop>
     </linearGradient>
    <path d="M150 10 a120 120 0 0 1 103.9230 60"

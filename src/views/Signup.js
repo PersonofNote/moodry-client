@@ -22,6 +22,14 @@ function Signup({signUp, switchView, confirmSignup, showCodeField}) {
     const onPasswordChange = e => setPassword(e.target.value);
     const onCodeChange = e => setCodeValue(e.target.value);
 
+    const handleKeyDown = (e) => {
+        console.log(e)
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            signUp(email, password)
+        }
+    }
+
   return (
     <main>
         <div className="form-container">
@@ -39,7 +47,7 @@ function Signup({signUp, switchView, confirmSignup, showCodeField}) {
             label={"Enter Password"} 
         />
             {!showCodeField &&
-            <Button onClick={() => signUp(email, password)} > Sign Up </Button>
+            <Button variant="contained" onKeyPress={handleKeyDown} onClick={() => signUp(email, password)} > Sign Up </Button>
             }
             {showCodeField && (
             <>

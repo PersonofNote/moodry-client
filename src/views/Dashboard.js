@@ -1,6 +1,9 @@
-import { useEffect, useState } from 'react';
-import { API } from 'aws-amplify';
+import { useEffect, useState, useCallback } from 'react';
 import { errorMessages, moodTextMapping, moodColors } from '../constants'
+import { format } from 'date-fns'
+
+// API functions
+import { API } from 'aws-amplify';
 import { listMoods } from '../graphql/queries';
 import * as mutations from '../graphql/mutations';
 
@@ -36,7 +39,9 @@ function Dashboard({user}) {
         const sortedData = filteredData.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
         console.log(sortedData)
         */
-        setMoods(renderMood(apiData.data.listMoods.items))
+        const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
+        //const valueMemoized = useMemo(() => computeExpensiveValue(a, b), [a, b])
+        setMoods(renderMood(sorted))
     }   
     catch (error) {
         console.log('error', error);
@@ -49,6 +54,7 @@ function Dashboard({user}) {
         const moodData = {value: e.currentTarget.value, note: noteValue, usersID: user.username }
         addMood(moodData)
         setNoteValue('')
+        fetchMoods()
         }
         catch (error) {
             console.log('error', error);
@@ -64,6 +70,7 @@ function Dashboard({user}) {
                 _version: dataArr[1]
             }
             deleteMood(moodData)
+            fetchMoods()
             }
             catch (error) {
                 console.log('error', error);
@@ -73,7 +80,7 @@ function Dashboard({user}) {
    
     useEffect(() => {
         fetchMoods();
-      }, [handleMoodClick, handleDeleteMood]);
+      }, []);
   
 
     const renderMood = (moodsList) => {
@@ -83,8 +90,8 @@ function Dashboard({user}) {
             if (_deleted) {
                 return null
             }
-            const date = new Date(createdAt).toDateString()
-            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
+            const date = format(new Date(createdAt), 'yyyy-MM-dd h:m:s aaaa')
+            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
         });
         return moodsArray;
     }

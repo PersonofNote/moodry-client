@@ -3,7 +3,7 @@ import MoodryLogo from './components/logo.svg'
 import './App.css';
 // AWS stuff
 import { Amplify, Auth, Hub, API, graphqlOperation } from 'aws-amplify';
-import awsconfig from './aws-exports';
+// import awsconfig from './aws-exports';
 import { DataStore } from '@aws-amplify/datastore';
 import { Users } from './models';
 
