@@ -12,6 +12,7 @@ import '../styles/dashboard.css';
 // Components
 import MoodEntryModule from '../components/MoodEntry'
 import MoodLineChart from '../components/LineChart';
+import Error from '../components/Error';
 
 // MUI
 import { Button, Box } from '@mui/material';
@@ -30,18 +31,10 @@ function Dashboard({user}) {
     const fetchMoods = async () => {
         try {
         const apiData = await API.graphql({ query: listMoods });
-        // TODO: finish sorting data by timestamp; currently causing a re-render for each iteration.
-        // Need to process without hitting UseEffect every time. Will this need a backend-as-middleware?
-        /*
-        console.log(apiData.data.listMoods.items.length)
-        const filteredData = (apiData.data.listMoods.items.filter(item => !item._deleted))
-        console.log(filteredData)
-        const sortedData = filteredData.sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))
-        console.log(sortedData)
-        */
         const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
+        console.log(sorted)
         //const valueMemoized = useMemo(() => computeExpensiveValue(a, b), [a, b])
-        setMoods(renderMood(sorted))
+        setMoods(sorted)
     }   
     catch (error) {
         console.log('error', error);
@@ -53,6 +46,7 @@ function Dashboard({user}) {
         try { 
         const moodData = {value: e.currentTarget.value, note: noteValue, usersID: user.username }
         addMood(moodData)
+        setMoods([...moods, moodData])
         setNoteValue('')
         fetchMoods()
         }
@@ -67,10 +61,8 @@ function Dashboard({user}) {
             const dataArr = e.currentTarget.value.split(",")
             const moodData = {
                 id: dataArr[0],
-                _version: dataArr[1]
             }
             deleteMood(moodData)
-            fetchMoods()
             }
             catch (error) {
                 console.log('error', error);
@@ -80,18 +72,15 @@ function Dashboard({user}) {
    
     useEffect(() => {
         fetchMoods();
-      }, []);
+      }, [moods]);
   
 
     const renderMood = (moodsList) => {
-        // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt, _version, _deleted, _lastChangedAt}
+        // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt}
         const moodsArray = Object.keys(moodsList).map((key, index) => {
-            const { id, value, note, createdAt, _version, _deleted } = moodsList[key];
-            if (_deleted) {
-                return null
-            }
-            const date = format(new Date(createdAt), 'yyyy-MM-dd h:m:s aaaa')
-            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id, _version]}>Delete</Button> </Box></Box>
+            const { id, value, note, createdAt } = moodsList[key];
+            const date = createdAt ? format(new Date(createdAt), 'yyyy-MM-dd h:m:s aaaa') : "Test";
+            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id]}>Delete</Button> </Box></Box>
         });
         return moodsArray;
     }
@@ -106,7 +95,7 @@ function Dashboard({user}) {
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         {showMoods &&(
         <div className="moods-list">
-            {moods}
+            {renderMood(moods)}
         </div>
         )}
         <br/>

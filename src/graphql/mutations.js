@@ -13,9 +13,6 @@ export const createMoods = /* GraphQL */ `
       usersID
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -31,9 +28,6 @@ export const updateMoods = /* GraphQL */ `
       usersID
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -49,9 +43,6 @@ export const deleteMoods = /* GraphQL */ `
       usersID
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -69,13 +60,9 @@ export const createUsers = /* GraphQL */ `
       role
       Moods {
         nextToken
-        startedAt
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -93,13 +80,10 @@ export const updateUsers = /* GraphQL */ `
       role
       Moods {
         nextToken
-        startedAt
+        
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
@@ -117,13 +101,10 @@ export const deleteUsers = /* GraphQL */ `
       role
       Moods {
         nextToken
-        startedAt
+        
       }
       createdAt
       updatedAt
-      _version
-      _deleted
-      _lastChangedAt
     }
   }
 `;
