@@ -11,7 +11,8 @@ import '../styles/dashboard.css';
 
 // Components
 import MoodEntryModule from '../components/MoodEntry'
-import MoodLineChart from '../components/LineChart';
+import MoodLineChart from '../components/MoodLineChart';
+import SampleChart from '../components/LineChart';
 import Error from '../components/Error';
 
 // MUI
@@ -22,33 +23,35 @@ function Dashboard({user}) {
     const [moods, setMoods] = useState([]);
     const [showMoods, setShowMoods] = useState(false)
     const [noteValue, setNoteValue] = useState('')
+    const [loading, setLoading] = useState(true);
 
     const onNoteChange = e => {
         console.log(e.target.value)
-        setNoteValue(e.target.value);
+        setNoteValue(e.target.value)
     }
 
-    const fetchMoods = async () => {
+    const fetchMoods = useCallback(async () => {
         try {
         const apiData = await API.graphql({ query: listMoods });
         const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
-        console.log(sorted)
         //const valueMemoized = useMemo(() => computeExpensiveValue(a, b), [a, b])
         setMoods(sorted)
+        setLoading(false)
     }   
     catch (error) {
         console.log('error', error);
         setError(error.errors[0].message)
     }   
-    }
+    }, [])
     
     const handleMoodClick = async e => {
+        setLoading(true)
         try { 
         const moodData = {value: e.currentTarget.value, note: noteValue, usersID: user.username }
-        addMood(moodData)
-        setMoods([...moods, moodData])
+        const newMood = await addMood(moodData)
         setNoteValue('')
         fetchMoods()
+        setLoading(false)
         }
         catch (error) {
             console.log('error', error);
@@ -63,6 +66,9 @@ function Dashboard({user}) {
                 id: dataArr[0],
             }
             deleteMood(moodData)
+            // Visually remove from list to reduce fetching
+            const newMoodList = moods.filter(m => m.id != moodData.id);
+            setMoods(newMoodList);
             }
             catch (error) {
                 console.log('error', error);
@@ -72,9 +78,9 @@ function Dashboard({user}) {
    
     useEffect(() => {
         fetchMoods();
-      }, [moods]);
+      },[]);
   
-
+      // Break out into new component or nah?
     const renderMood = (moodsList) => {
         // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt}
         const moodsArray = Object.keys(moodsList).map((key, index) => {
@@ -84,6 +90,9 @@ function Dashboard({user}) {
         });
         return moodsArray;
     }
+
+    // Does it make a difference to declare it up here?
+    const moodsList = renderMood(moods);
     
     const addMood = async(moodData) => await API.graphql({ query: mutations.createMoods, variables: {input: moodData}});
     const deleteMood = async(moodData) => await API.graphql({ query: mutations.deleteMoods, variables: {input: moodData}});
@@ -91,17 +100,22 @@ function Dashboard({user}) {
   return (
     <main>
         <div className="content">
-        <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
+            {!loading &&
+                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
+            }
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         {showMoods &&(
         <div className="moods-list">
-            {renderMood(moods)}
+            {moodsList}
         </div>
         )}
         <br/>
         <h2>Below this line is experimental stuff</h2>
         <div className="chart-container">
-            <MoodLineChart />
+            <MoodLineChart moodData={moods} />
+        </div>
+        <div className="chart-container">
+            <SampleChart />
         </div>
         {error && (
             <div>{error}</div>

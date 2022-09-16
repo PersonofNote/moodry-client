@@ -1,58 +1,27 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { format } from 'date-fns'
 
-const data = [
-  {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page F',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
-  },
-];
+const MoodLineChart = ({moodData}) => {
+  console.log(moodData)
 
-const MoodLineChart = () => {
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const readableDate = format(new Date(payload[0].payload.createdAt), 'yyyy-MM-dd h:m:s aaaa')
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{`${readableDate} : ${payload[0].value}`}</p>
+          <p className="desc">{payload[0].note}</p>
+        </div>
+      );
+    }
+  }
 
     return (
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           width={500}
           height={300}
-          data={data}
+          data={moodData}
           margin={{
             top: 5,
             right: 30,
@@ -60,13 +29,11 @@ const MoodLineChart = () => {
             bottom: 5,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <XAxis dataKey="createdAt" />
+          <YAxis allowDecimals={false} dataKey="value" domain={[1, 3]} />
+          <Tooltip content={<CustomTooltip />}/>
           <Legend />
-          <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-          <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
     );
