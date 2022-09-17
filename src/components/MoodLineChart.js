@@ -2,15 +2,16 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { format } from 'date-fns'
 
 const MoodLineChart = ({moodData}) => {
-  console.log(moodData)
-
+  // TODO: add different filtering functions
+  const data = moodData.slice(0, 10);
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
+      console.log(payload[0].payload)
       const readableDate = format(new Date(payload[0].payload.createdAt), 'yyyy-MM-dd h:m:s aaaa')
       return (
-        <div className="custom-tooltip">
+        <div className="tooltip-ams">
           <p className="label">{`${readableDate} : ${payload[0].value}`}</p>
-          <p className="desc">{payload[0].note}</p>
+          <p className="desc">{payload[0].payload.note ? `Note: ${payload[0].payload.note}` : '' }</p>
         </div>
       );
     }
@@ -21,7 +22,7 @@ const MoodLineChart = ({moodData}) => {
         <LineChart
           width={500}
           height={300}
-          data={moodData}
+          data={data}
           margin={{
             top: 5,
             right: 30,

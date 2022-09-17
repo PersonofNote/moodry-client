@@ -1,10 +1,10 @@
 import {useState} from 'react';
-import { Grid, IconButton, TextField } from '@mui/material';
+import { Grid, IconButton, TextField, Button } from '@mui/material';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 
-const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
+const MoodEntryModule = ({ handleMoodClick, handleChange, noteValue, moodValue }) => {
     const [error, setError] = useState(null);
 
     return(
@@ -16,11 +16,11 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
         </Grid>
         <Grid container justifyContent="center">
             <IconButton 
-                className="icon-button-ams"
+                className={`icon-button-ams`}
                 color="inherit"
                 size="large"
                 value={1}
-                onClick={handleMoodClick}>
+                onClick={e => handleChange(e)}>
                 <SentimentDissatisfiedIcon
                     strokeWidth={2}
                     style={{ fill: 'red', height: '100%', width: '100%'}}
@@ -31,7 +31,7 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
                 color="inherit"
                 size="large"
                 value={2}
-                onClick={handleMoodClick}>
+                onClick={e => handleChange(e)}>
                 <SentimentNeutralIcon
                     strokeWidth={2}
                     style={{ fill: 'orange', height: '100%', width: '100%' }}
@@ -42,7 +42,7 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
                 color="inherit" 
                 size="large"
                 value={3}
-                onClick={handleMoodClick}>
+                onClick={e => handleChange(e)}>
                 <SentimentSatisfiedAltIcon
                     strokeWidth={2}
                     style={{ fill: 'green', height: '100%', width: '100%' }}
@@ -51,10 +51,14 @@ const MoodEntryModule = ({ user, handleMoodClick, handleNote, noteValue }) => {
         </Grid>
         <Grid container justifyContent="center">
         <TextField
-            onChange={e => handleNote(e)}
+            onChange={e => handleChange(e)}
             value={noteValue}
-            label={"Enter Note (Optional)"} 
+            label={"Enter Note (Optional)"}
+            name="note"
         /></Grid>
+            <Grid sx={{marginTop: '12px'}} container justifyContent="center">
+                <Button variant="contained" disabled={moodValue === null} onClick={handleMoodClick}>Add Mood</Button>
+            </Grid>
         </Grid>
         </Grid>
         </>

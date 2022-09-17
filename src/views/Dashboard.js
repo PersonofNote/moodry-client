@@ -16,18 +16,24 @@ import SampleChart from '../components/LineChart';
 import Error from '../components/Error';
 
 // MUI
-import { Button, Box } from '@mui/material';
+import { Button, Box, TextField } from '@mui/material';
 
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
     const [showMoods, setShowMoods] = useState(false)
+    const [moodValue, setMoodValue] = useState(null)
     const [noteValue, setNoteValue] = useState('')
     const [loading, setLoading] = useState(true);
 
-    const onNoteChange = e => {
-        console.log(e.target.value)
-        setNoteValue(e.target.value)
+    const updateMoodData = e => {
+        if (e.target.name === 'note'){
+            setNoteValue(e.target.value)
+            console.log("NOTE" + noteValue)
+        }else{
+            setMoodValue(e.currentTarget.value)
+            console.log("MOOD" + moodValue)
+        }
     }
 
     const fetchMoods = useCallback(async () => {
@@ -47,17 +53,40 @@ function Dashboard({user}) {
     const handleMoodClick = async e => {
         setLoading(true)
         try { 
-        const moodData = {value: e.currentTarget.value, note: noteValue, usersID: user.username }
-        const newMood = await addMood(moodData)
-        setNoteValue('')
-        fetchMoods()
-        setLoading(false)
+            const moodData = {value: moodValue, note: noteValue, usersID: user.username }
+            const newMood = await addMood(moodData)
+            // Todo: if possible, reduce a fetch here by faking it. The spread operator should be enough
+            // to visually add, but it's not working for some reason.
+            fetchMoods()
+            setLoading(false)
         }
         catch (error) {
             console.log('error', error);
             setError(errorMessages[error.name])
         }
     }
+
+        
+    const handleAddNote = async e => {
+        // TODO: add blur/focus to keep the note input to just its own textbox
+        if (noteValue.length > 0) {
+            try { 
+                const moodData = {
+                    id: e.currentTarget.value,
+                    note: noteValue
+                }
+                const newMood = await addNote(moodData)
+                setNoteValue("")
+                fetchMoods()
+            }catch (error) {
+                console.log('error', error);
+                setError(errorMessages[error.name])
+            }
+        }else{
+            setError("Note cannot be empty")
+        }
+    }
+
 
     const handleDeleteMood = async e => {
         try {
@@ -75,33 +104,45 @@ function Dashboard({user}) {
                 setError(errorMessages[error.name])
             }
     }
-   
+
     useEffect(() => {
         fetchMoods();
       },[]);
   
-      // Break out into new component or nah?
+    // Break out into new component or nah?
     const renderMood = (moodsList) => {
         // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt}
         const moodsArray = Object.keys(moodsList).map((key, index) => {
             const { id, value, note, createdAt } = moodsList[key];
             const date = createdAt ? format(new Date(createdAt), 'yyyy-MM-dd h:m:s aaaa') : "Test";
-            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}><Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `90px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> <Box sx={{width: `45%`}} className='box-item-ams'>{note} </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id]}>Delete</Button> </Box></Box>
+            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}>
+                <Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `60px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> 
+                <Box sx={{width: `45%`}} className='box-item-ams'>
+                {note ? note : <>
+                <TextField
+                label={"Enter Note (Optional)"}
+                size="small"
+                name="note"
+                onChange={updateMoodData}
+                /> 
+            <Button value={id} variant="contained" onClick={handleAddNote}>Add&nbsp;Note</Button>
+            </>} 
+            </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id]}>Delete</Button> </Box></Box>
         });
         return moodsArray;
     }
 
-    // Does it make a difference to declare it up here?
     const moodsList = renderMood(moods);
     
     const addMood = async(moodData) => await API.graphql({ query: mutations.createMoods, variables: {input: moodData}});
     const deleteMood = async(moodData) => await API.graphql({ query: mutations.deleteMoods, variables: {input: moodData}});
-
-  return (
+    const addNote = async(moodData) => await API.graphql({query: mutations.updateMoods, variables: {input: moodData}})
+  
+    return (
     <main>
         <div className="content">
             {!loading &&
-                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleNote={onNoteChange} noteValue={noteValue}/>
+                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleChange={updateMoodData} noteValue={noteValue}/>
             }
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         {showMoods &&(
