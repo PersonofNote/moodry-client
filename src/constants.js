@@ -14,7 +14,7 @@ export const moodIconMapping = {
 
 export const moodTextMapping = {
     1: 'Bad',
-    2: 'Neutral',
+    2: 'OK',
     3: 'Good'
 }
 

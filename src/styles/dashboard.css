@@ -4,8 +4,6 @@ main {
 }
 
 .content {
-    width: 90%;
-    margin: auto;
     min-height: 60vh;
 }
 
@@ -29,6 +27,11 @@ main {
 .moods-list {
     list-style: none;
 }
+
+.box-container-ams {
+    padding: 8px 0;
+}
+
 
 .box-item-ams {
     display: flex;
@@ -74,6 +77,7 @@ main {
 
     .content {
         width: 80%;
+        margin: auto;
     }
     
     .ad {

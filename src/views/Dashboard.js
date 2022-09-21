@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { errorMessages, moodTextMapping, moodColors } from '../constants'
+import { errorMessages, moodTextMapping, moodColors, moodIconMapping } from '../constants'
 import { format } from 'date-fns'
 
 // API functions
@@ -17,6 +17,10 @@ import Error from '../components/Error';
 
 // MUI
 import { Button, Box, TextField } from '@mui/material';
+import SvgIcon from '@mui/material/SvgIcon';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
+import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 
 function Dashboard({user}) {
     const [error, setError] = useState(null);
@@ -62,7 +66,7 @@ function Dashboard({user}) {
         }
         catch (error) {
             console.log('error', error);
-            setError(errorMessages[error.name])
+            setError(errorMessages[error.name]);
         }
     }
 
@@ -114,18 +118,19 @@ function Dashboard({user}) {
         // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt}
         const moodsArray = Object.keys(moodsList).map((key, index) => {
             const { id, value, note, createdAt } = moodsList[key];
-            const date = createdAt ? format(new Date(createdAt), 'yyyy-MM-dd h:m:s aaaa') : "Test";
-            return <Box key={`${index}`} className="box-item-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}>
-                <Box sx={{width: `33%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `60px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> 
+            const Icon = moodIconMapping[value]
+            const date = createdAt ? format(new Date(createdAt), 'MM/dd h:m aaaa') : "Test";
+            return <Box key={`${index}`} className="box-container-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}>
+                <Box sx={{width: `20%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `35px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> 
                 <Box sx={{width: `45%`}} className='box-item-ams'>
-                {note ? note : <>
+                {note ? <div style={{paddingLeft: `12px`}}>{note}</div> : <>
                 <TextField
                 label={"Enter Note (Optional)"}
                 size="small"
                 name="note"
                 onChange={updateMoodData}
                 /> 
-            <Button value={id} variant="contained" onClick={handleAddNote}>Add&nbsp;Note</Button>
+            <Button value={id} variant="contained" onClick={handleAddNote}>Add</Button>
             </>} 
             </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id]}>Delete</Button> </Box></Box>
         });
@@ -153,7 +158,7 @@ function Dashboard({user}) {
         <br/>
         <h2>Below this line is experimental stuff</h2>
         <div className="chart-container">
-            <MoodLineChart moodData={moods} />
+            <MoodLineChart moodData={moods} loading={loading} />
         </div>
         <div className="chart-container">
             <SampleChart />
