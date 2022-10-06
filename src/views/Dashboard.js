@@ -11,9 +11,7 @@ import '../styles/dashboard.css';
 
 // Components
 import MoodEntryModule from '../components/MoodEntry'
-import MoodLineChart from '../components/MoodLineChart';
-import SampleChart from '../components/LineChart';
-import Error from '../components/Error';
+import LineChartModule from '../components/ChartModule'
 
 // MUI
 import { Button, Box, TextField } from '@mui/material';
@@ -151,18 +149,14 @@ function Dashboard({user}) {
             }
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         {showMoods &&(
+        <>
         <div className="moods-list">
             {moodsList}
         </div>
+        </>
         )}
         <br/>
-        <h2>Below this line is experimental stuff</h2>
-        <div className="chart-container">
-            <MoodLineChart moodData={moods} loading={loading} />
-        </div>
-        <div className="chart-container">
-            <SampleChart />
-        </div>
+        <LineChartModule type="line" data={moods} loading={loading}/>
         {error && (
             <div>{error}</div>
         )}

@@ -1,13 +1,13 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { add, format, differenceInCalendarDays, isFuture, formatDistanceToNow } from 'date-fns'
 
-const MoodLineChart = ({moodData, loading}) => {
+const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   if (loading) {
     return null;
   }
   // TODO: add different filtering functions
-  const data = moodData.slice(0, 10).reverse();
-  
+  //const data = moodData.slice(0, 10).reverse();
+  const data = moodData
   // Date functions from https://codesandbox.io/s/recharts-area-chart-with-date-axis-6o55k?file=/src/DateArea.js:365-836
   const dateFormatter = date => {
     return format(new Date(date), "dd/MMM");
@@ -56,11 +56,10 @@ const MoodLineChart = ({moodData, loading}) => {
   const domain = [startDate.getTime(), endDate.getTime()]
   const ticks = getTicks(startDate, endDate, 1);
   
-  
+  // TODO: Extract to own function
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       console.log(payload[0].payload)
-      const readableDate = format(new Date(payload[0].payload.createdAt), 'MM-dd h:m:s aaaa')
       const friendlyDate = formatDistanceToNow(
         new Date(payload[0].payload.createdAt)
       )
@@ -80,9 +79,9 @@ const MoodLineChart = ({moodData, loading}) => {
           height={300}
           data={data}
           margin={{
-            top: 5,
+            top: 15,
             right: 30,
-            left: 20,
+            left: 0,
             bottom: 5,
           }}
         >
@@ -100,7 +99,7 @@ const MoodLineChart = ({moodData, loading}) => {
           <YAxis allowDecimals={false} dataKey="value" domain={[1, 3]} />
           <Tooltip content={<CustomTooltip />}/>
           <Legend />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" activeDot={{ r: 8 }} />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" dot={{ r: 8 }} />
         </LineChart>
       </ResponsiveContainer>
     );
