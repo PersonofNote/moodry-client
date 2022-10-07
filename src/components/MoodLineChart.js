@@ -50,11 +50,11 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   };
 
   // Temp
-  const startDate = new Date(data[0].createdAt);
-  const endDate = new Date(data[data.length-1].createdAt);
+  // const startDate = new Date(data[0].createdAt);
+  // const endDate = new Date(data[data.length-1].createdAt);
   // const domain = [dataMin => dataMin, () => endDate.getTime()];
-  const domain = [startDate.getTime(), endDate.getTime()]
-  const ticks = getTicks(startDate, endDate, 1);
+  // const domain = [startDate.getTime(), endDate.getTime()]
+  // const ticks = getTicks(startDate, endDate, 1);
   
   // TODO: Extract to own function
   const CustomTooltip = ({ active, payload }) => {
@@ -85,17 +85,7 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
             bottom: 5,
           }}
         >
-          {/* <XAxis /> */}
-            <XAxis
-           
-            
-            tickFormatter={dateFormatter}
-            
-            interval={0}
-            domain={domain}
-            ticks={ticks}
-          />
-          
+          <XAxis />
           <YAxis allowDecimals={false} dataKey="value" domain={[1, 3]} />
           <Tooltip content={<CustomTooltip />}/>
           <Legend />
