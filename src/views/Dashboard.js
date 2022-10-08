@@ -40,9 +40,14 @@ function Dashboard({user}) {
 
     const fetchMoods = useCallback(async () => {
         try {
-        const apiData = await API.graphql({ query: listMoods });
+        // This seems like a glaring weak spot to have on the client side, what's up with this
+        let filter = {
+            usersID: {
+                eq: user.username
+            }
+        };
+        const apiData = await API.graphql({ query: listMoods, variables: {filter : filter} });
         const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
-        //const valueMemoized = useMemo(() => computeExpensiveValue(a, b), [a, b])
         setMoods(sorted)
         setLoading(false)
     }   
@@ -64,7 +69,7 @@ function Dashboard({user}) {
         }
         catch (error) {
             console.log('error', error);
-            setError(errorMessages[error.name]);
+            setError(errorMessages[error.name])
         }
     }
 
@@ -98,7 +103,7 @@ function Dashboard({user}) {
             }
             deleteMood(moodData)
             // Visually remove from list to reduce fetching
-            const newMoodList = moods.filter(m => m.id != moodData.id);
+            const newMoodList = moods.filter(m => m.id !== moodData.id);
             setMoods(newMoodList);
             }
             catch (error) {
