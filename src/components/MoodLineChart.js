@@ -7,7 +7,7 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   }
   // TODO: add different filtering functions
   //const data = moodData.slice(0, 10).reverse();
-  const data = moodData
+  const data = moodData.reverse()
   // Date functions from https://codesandbox.io/s/recharts-area-chart-with-date-axis-6o55k?file=/src/DateArea.js:365-836
   const dateFormatter = date => {
     return format(new Date(date), "dd/MMM");

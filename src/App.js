@@ -69,10 +69,13 @@ function App() {
   }, []);
   
 
-  function getUser() {
-    return Auth.currentAuthenticatedUser()
-      .then(userData => userData)
-      .catch(() => console.log('Not signed in'));
+  async function getUser() {
+    try {
+      const userData = await Auth.currentAuthenticatedUser();
+      return userData;
+    } catch {
+      return console.log('Not signed in');
+    }
   }
 
   const signUp = async (username, password) => {

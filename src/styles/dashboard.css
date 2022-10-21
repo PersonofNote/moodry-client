@@ -60,6 +60,13 @@ main {
     margin-bottom: 4px;
 }
 
+.icon-button-ams.button-active {
+    background-color: ghostwhite;
+    border: 3px dotted gray;
+    margin-bottom: 4px;
+}
+
+
 .icon-buttom-ams svg {
     width: 100%;
     height: 100%;

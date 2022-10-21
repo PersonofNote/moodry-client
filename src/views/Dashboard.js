@@ -34,7 +34,7 @@ function Dashboard({user}) {
             console.log("NOTE" + noteValue)
         }else{
             setMoodValue(e.currentTarget.value)
-            console.log("MOOD" + moodValue)
+            console.log(moodValue)
         }
     }
 
@@ -47,6 +47,7 @@ function Dashboard({user}) {
             }
         };
         const apiData = await API.graphql({ query: listMoods, variables: {filter : filter} });
+        console.log(apiData)
         const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
         setMoods(sorted)
         setLoading(false)
@@ -62,6 +63,8 @@ function Dashboard({user}) {
         try { 
             const moodData = {value: moodValue, note: noteValue, usersID: user.username }
             const newMood = await addMood(moodData)
+            console.log("Posting")
+            console.log(newMood)
             // Todo: if possible, reduce a fetch here by faking it. The spread operator should be enough
             // to visually add, but it's not working for some reason.
             fetchMoods()
@@ -150,7 +153,7 @@ function Dashboard({user}) {
     <main>
         <div className="content">
             {!loading &&
-                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleChange={updateMoodData} noteValue={noteValue}/>
+                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleChange={updateMoodData} noteValue={noteValue} moodValue={moodValue}/>
             }
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         {showMoods &&(

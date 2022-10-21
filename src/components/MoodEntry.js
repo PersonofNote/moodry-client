@@ -16,7 +16,7 @@ const MoodEntryModule = ({ handleMoodClick, handleChange, noteValue, moodValue }
         </Grid>
         <Grid container justifyContent="center">
             <IconButton 
-                className={`icon-button-ams`}
+                className={`icon-button-ams ${parseInt(moodValue) === 1 ? 'button-active' : ''}`}
                 color="inherit"
                 size="large"
                 value={1}
@@ -27,7 +27,7 @@ const MoodEntryModule = ({ handleMoodClick, handleChange, noteValue, moodValue }
                 />
             </IconButton>
             <IconButton
-                className="icon-button-ams"
+                className={`icon-button-ams ${parseInt(moodValue) === 2 ? 'button-active' : ''}`}
                 color="inherit"
                 size="large"
                 value={2}
@@ -38,7 +38,7 @@ const MoodEntryModule = ({ handleMoodClick, handleChange, noteValue, moodValue }
                 />
             </IconButton>
             <IconButton
-                className="icon-button-ams" 
+                className={`icon-button-ams ${parseInt(moodValue) === 3 ? 'button-active' : ''}`}
                 color="inherit" 
                 size="large"
                 value={3}
