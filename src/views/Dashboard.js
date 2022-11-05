@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 import { errorMessages, moodTextMapping, moodColors, moodIconMapping } from '../constants'
 import { format } from 'date-fns'
+import { Logger } from 'aws-amplify';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 
 // API functions
 import { API } from 'aws-amplify';
@@ -20,6 +22,8 @@ import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt
 import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
 import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
 
+const logger = new Logger('foo');
+
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
@@ -31,10 +35,8 @@ function Dashboard({user}) {
     const updateMoodData = e => {
         if (e.target.name === 'note'){
             setNoteValue(e.target.value)
-            console.log("NOTE" + noteValue)
         }else{
             setMoodValue(e.currentTarget.value)
-            console.log(moodValue)
         }
     }
 
@@ -47,7 +49,6 @@ function Dashboard({user}) {
             }
         };
         const apiData = await API.graphql({ query: listMoods, variables: {filter : filter} });
-        console.log(apiData)
         const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
         setMoods(sorted)
         setLoading(false)
@@ -63,8 +64,7 @@ function Dashboard({user}) {
         try { 
             const moodData = {value: moodValue, note: noteValue, usersID: user.username }
             const newMood = await addMood(moodData)
-            console.log("Posting")
-            console.log(newMood)
+            logger.debug(`User ${user.username} posted data`)
             // Todo: if possible, reduce a fetch here by faking it. The spread operator should be enough
             // to visually add, but it's not working for some reason.
             fetchMoods()
@@ -148,7 +148,11 @@ function Dashboard({user}) {
     const addMood = async(moodData) => await API.graphql({ query: mutations.createMoods, variables: {input: moodData}});
     const deleteMood = async(moodData) => await API.graphql({ query: mutations.deleteMoods, variables: {input: moodData}});
     const addNote = async(moodData) => await API.graphql({query: mutations.updateMoods, variables: {input: moodData}})
-  
+
+    if (!user) {
+        return <Navigate to="/signin" replace />;
+      }
+    /*
     return (
     <main>
         <div className="content">
@@ -164,7 +168,10 @@ function Dashboard({user}) {
         </>
         )}
         <br/>
+        {moods && moods != undefined && moods.length > 0 &&(
         <LineChartModule type="line" data={moods} loading={loading}/>
+        )
+        }
         {error && (
             <div>{error}</div>
         )}
@@ -172,6 +179,10 @@ function Dashboard({user}) {
         <div className="ad">Ad goes here for non-premium users</div>
     </main>
   );
+  */
+ return (
+    <h1> DASHBOARD</h1>
+ )
 }
 
 export default Dashboard;

@@ -1,21 +1,27 @@
 import {useEffect, useState} from 'react';
 import MoodryLogo from './components/logo.svg'
 import './App.css';
-// AWS stuff
-import { Amplify, Auth, Hub, API, graphqlOperation } from 'aws-amplify';
-// import awsconfig from './aws-exports';
-import { DataStore } from '@aws-amplify/datastore';
-import { Users } from './models';
 
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link
+} from "react-router-dom";
 
 // Material components
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 
-// App components
+// App pages
 import Dashboard from './views/Dashboard';
 import Signup from './views/Signup'
 import Signin from './views/Signin'
+import Analytics from './views/Analytics'
+import ErrorPage from './views/ErrorPage'
+
+// Layout components
+import Header from './components/Header'
 
 import { errorMessages } from './constants'
 
@@ -23,7 +29,14 @@ function App() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [showCodeField, setShowCodeField] = useState(false);
-  const [view, setView] = useState('signup')
+
+
+
+  const handleLogin = () => {
+    console.log("SETTING USER")
+    setUser({ id: '1', name: 'jessie', role: 'admin' });
+  }
+  const handleLogout = () => setUser(null);
 
   const renderError = (error) => {
     return Object.keys(error).map((key, index) => {
@@ -39,108 +52,25 @@ function App() {
     })
   }
 
-  // Consider refactor, as this just switches between login and signup. Break out?
-  const switchView = e => {
-    setView(e.target.value)
- }
-  
- // Straight from https://docs.amplify.aws/lib/auth/auth-events/q/platform/js/
- // Not sure I 100% understand exactly what's going on here with 'congnitoHostedUI'
- // The code works but I see some redundancies
- useEffect(() => {
-    Hub.listen('auth', ({ payload: { event, data } }) => {
-      switch (event) {
-        case 'signIn':
-        case 'cognitoHostedUI':
-          getUser().then(userData => setUser(userData));
-          break;
-        case 'signOut':
-          setUser(null);
-          break;
-        case 'signIn_failure':
-        case 'cognitoHostedUI_failure':
-          console.log('Sign in failure', data);
-          setError(data)
-          break;
-      }
-    });
-
-    getUser().then(userData => setUser(userData));
-  }, []);
-  
-
-  async function getUser() {
-    try {
-      const userData = await Auth.currentAuthenticatedUser();
-      return userData;
-    } catch {
-      return console.log('Not signed in');
-    }
-  }
-
-  const signUp = async (username, password) => {
-    try {
-      const { user } = await Auth.signUp({ username, password });
-      // second stage of signup; check if Amplify has a pre-rolled solution to this
-      setShowCodeField(true)
-  } catch (error) {
-      console.log('error signing up:', error);
-      setError(errorMessages[error.name])
-  }
-  }
-
-  const confirmSignup = async (username, code) => {
-    try {
-      await Auth.confirmSignUp(username, code);
-      setError("Success! You can now log in")
-    } catch (error) {
-        console.log('error confirming sign up', error);
-        setError(errorMessages[error.name])
-    }
-}
-
-  const signIn = async (username, password) => {
-    try {
-    const user = await Auth.signIn(username, password);
-} catch (error) {
-    console.log('error signing in', error);
-    setError(errorMessages[error.name])
-}
-  }
-
-
-  const signOut = async () => {
-    try {
-      await Auth.signOut();
-  } catch (error) {
-      console.log('error signing out: ', error);
-  }
-  }
+  // TODO: render conditional routing based on logged in or not
 
   return (
+
+    <BrowserRouter>
+    <div>
+      {user &&  <Header user={user} setUser={setUser} />}
+      <Routes>
+      <Route path="/" element={<Dashboard user={user}/>} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/signin" element={<Signin handleLogin={handleLogin} user={user} />} />
+      <Route path="/dashboard" element={<Dashboard user={user}/>} />
+      <Route path="/analytics" element={<Analytics />} />
+      <Route path="*" element={<ErrorPage />} />
+      </Routes>
     
-    <div className="App">
-      <header className="App-header">
-      <nav>
-        <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" />
-        {user && <Button onClick={() => Auth.signOut()}>Sign Out</Button>}
-        </nav>
-      </header>
-      <div>
-        
-      {user ? (
-        <Dashboard user={user} />
-      ) : (
-        <>
-        {view === 'signup' ? <Signup signUp={signUp} showCodeField={showCodeField} confirmSignup={confirmSignup} switchView={switchView} /> : <Signin signIn={signIn} switchView={switchView} />}
-        
-        </>
-      )}
-      {error && (
-        <div>{error}</div>
-      )}
     </div>
-    </div>
+  </BrowserRouter>
+    
   );
 }
 

@@ -1,0 +1,10 @@
+MOOD SCHEMA
+
+{
+    createdAt: "2022-11-03T17:22:48.079Z"
+    id: "8c6ba980-677f-4dac-882c-842cb2b205e1"
+    note: "Feeling ok"
+    updatedAt: "2022-11-03T17:22:48.079Z"
+    usersID: "fd3f3be6-160a-4992-a0d7-043710901fd9"
+    value: 2
+}

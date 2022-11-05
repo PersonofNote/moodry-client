@@ -1,4 +1,5 @@
 import {useState} from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import '../styles/dashboard.css';
 
 // MUI
@@ -9,7 +10,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function Signin({signIn, switchView}) {
+const Signin = ({handleLogin, user}) => {
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -18,6 +20,10 @@ function Signin({signIn, switchView}) {
 
     const onEmailChange = e => setEmail(e.target.value);
     const onPasswordChange = e => setPassword(e.target.value);
+
+    if (user) {
+        return <Navigate to="/" replace />;
+    }
 
   return (
     <main>
@@ -35,8 +41,8 @@ function Signin({signIn, switchView}) {
             value={password}
             label={"Enter Password"} 
         />
-            <Button variant="contained" onClick={() => signIn(email, password)}> Sign In</Button>
-        <Button value="signup" onClick={switchView}> Sign Up </Button>
+            <Button variant="contained" onClick={handleLogin}> Sign In</Button>
+       <div> Don't have an account? <Link to="/signup">Sign Up</Link></div>
         </div>
     </main>
   );

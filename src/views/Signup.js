@@ -1,15 +1,20 @@
 import {useState} from 'react';
+import { Link } from 'react-router-dom';
+
 import '../styles/dashboard.css';
 
 // MUI
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
+
 // TODO: add visibility toggle to password
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-function Signup({signUp, switchView, confirmSignup, showCodeField}) {
+
+
+const Signup = ({signUp, switchView, confirmSignup, showCodeField}) => {
     // TODO: consider refactor to use a single form state object
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -60,7 +65,7 @@ function Signup({signUp, switchView, confirmSignup, showCodeField}) {
             <Button onClick={() => confirmSignup(email, codeValue)} > Confirm Sign Up </Button>
             </>
             )}
-        <Button value="signin" onClick={switchView}> Sign In </Button>
+        <div> Already have an account? <Link to="/signin">Sign In</Link></div>
         </div>
     </main>
   );

@@ -1,20 +1,26 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { add, format, differenceInCalendarDays, isFuture, formatDistanceToNow } from 'date-fns'
+import { getTime, add, format, differenceInCalendarDays, isFuture, formatDistanceToNow, differenceInHours, parseISO } from 'date-fns'
 
 const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   if (loading) {
     return null;
   }
   // TODO: add different filtering functions
-  //const data = moodData.slice(0, 10).reverse();
-  const data = moodData.reverse()
+
+  const data = moodData.map(m => parseISO(m.createdAt).getTime()).reverse()
   // Date functions from https://codesandbox.io/s/recharts-area-chart-with-date-axis-6o55k?file=/src/DateArea.js:365-836
   const dateFormatter = date => {
-    return format(new Date(date), "dd/MMM");
+    return format(new Date(date), "dd/MMM h:m aaaa");
   };
+
+  for (let x in data) {
+    console.log(data[x])
+    
+  }
+
   
   const getTicks = (startDate, endDate, num) => {
-    const diffDays = differenceInCalendarDays(endDate, startDate);
+    const diffDays = differenceInCalendarDays(parseISO(endDate), parseISO(startDate));
   
     let current = startDate,
       velocity = Math.round(diffDays / (num - 1));
@@ -28,6 +34,9 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
     ticks.push(endDate.getTime());
     return ticks;
   };
+
+  const ticks = getTicks(parseISO(moodData[0].createdAt), parseISO(moodData[moodData.length-1].createdAt), 4)
+  const domain = [ticks[0], ticks[ticks.length-1]]
 
   const fillTicksData = (_ticks, data) => {
     const ticks = [..._ticks];
@@ -59,7 +68,6 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   // TODO: Extract to own function
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      console.log(payload[0].payload)
       const friendlyDate = formatDistanceToNow(
         new Date(payload[0].payload.createdAt)
       )
@@ -85,7 +93,18 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
             bottom: 5,
           }}
         >
-          <XAxis />
+          {/*
+          <XAxis 
+          dataKey='createdAt'
+          type="number" 
+          domain={['auto', 'auto']}
+          interval={2}
+          tickFormatter={dateFormatter}
+          ticks={ticks}
+          allowDecimals={false}
+          />
+        */}
+        <XAxis />
           <YAxis allowDecimals={false} dataKey="value" domain={[1, 3]} />
           <Tooltip content={<CustomTooltip />}/>
           <Legend />
