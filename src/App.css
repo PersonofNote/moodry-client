@@ -53,3 +53,10 @@ nav {
 .mood-list {
   list-style: none;
 }
+
+.error-message {
+  color: red;
+  text-align: center;
+  font-weight: bold;
+  padding: 4px;
+}

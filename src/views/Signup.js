@@ -12,61 +12,81 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+const api_url = "http://localhost:8080/"
 
+const Signup = ({setUser}) => {
+    const [formValues, setFormValues] = useState({
+        username: null,
+        email: null,
+        password: null
+    })
 
-const Signup = ({signUp, switchView, confirmSignup, showCodeField}) => {
-    // TODO: consider refactor to use a single form state object
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [codeValue, setCodeValue] = useState("");
+    const [message, setMessage] = useState(null)
 
-    // TODO: implement error handling forEach in textFields
-    const [error, setError] = useState(null)
-
-    const onEmailChange = e => setEmail(e.target.value);
-    const onPasswordChange = e => setPassword(e.target.value);
-    const onCodeChange = e => setCodeValue(e.target.value);
-
-    const handleKeyDown = (e) => {
-        console.log(e)
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            signUp(email, password)
-        }
+    const handleChange = e => {
+        console.log(e.currentTarget);
+        const attName = e.currentTarget.name;
+        const value = e.currentTarget.value;
+        setFormValues({...formValues, [attName]: value}, console.log(JSON.stringify(formValues)))
     }
+
+    const signUp = () => {
+        if (formValues.username && formValues.email && formValues.password){
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formValues)
+            };
+            fetch(`${api_url}api/auth/signup`, requestOptions)
+                .then(response => response.json())
+                .then(res => setMessage(res.message));
+        }
+        else {
+            setMessage("One or more values is missing, please fill in all values and try again.")
+        }
+    };
 
   return (
     <main>
         <div className="form-container">
             <h1>Sign Up</h1>
         <TextField
-        onChange={onEmailChange}
-        value={email}
-        label={"Enter Email"} 
+            required
+            onChange={handleChange}
+            value={formValues.username}
+            label={"Enter a Username"}
+            name="username" 
         />
         <TextField
-            error={error}
-            onChange={onPasswordChange}
-            type='password'
-            value={password}
-            label={"Enter Password"} 
+        required
+        onChange={handleChange}
+        value={formValues.email}
+        label={"Enter an Email"}
+        name="email" 
         />
-            {!showCodeField &&
-            <Button variant="contained" onKeyPress={handleKeyDown} onClick={() => signUp(email, password)} > Sign Up </Button>
-            }
-            {showCodeField && (
+        <TextField
+            required
+            onChange={handleChange}
+            type='password'
+            value={formValues.password}
+            label={"Enter a Password"}
+            name="password" 
+        />
+        <Button variant="contained" onClick={() => signUp(formValues.username, formValues.email, formValues.password)} > Sign Up </Button>
+            {/*showCodeField && (
             <>
             <span> A code has been sent to your email. Please enter it here. (Don't navigate away from this page yet!)</span>
             <TextField
             onChange={onCodeChange}
             value={codeValue}
-            label={"Enter Code"} //optional
+            label={"Enter Code"}
         />
             <Button onClick={() => confirmSignup(email, codeValue)} > Confirm Sign Up </Button>
             </>
-            )}
+            )*/}
         <div> Already have an account? <Link to="/signin">Sign In</Link></div>
         </div>
+        <div className="form-container error-message">{message}</div>
     </main>
   );
 }

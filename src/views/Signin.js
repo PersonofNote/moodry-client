@@ -10,39 +10,75 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const Signin = ({handleLogin, user}) => {
+const api_url = "http://localhost:8080/"
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+const Signin = ({user, setUser}) => {
+    const [formValues, setFormValues] = useState({
+        email: null,
+        password: null
+    })
 
-    // TODO: implement error handling forEach in textFields
-    const [error, setError] = useState(null)
+    const [message, setMessage] = useState(null)
 
-    const onEmailChange = e => setEmail(e.target.value);
-    const onPasswordChange = e => setPassword(e.target.value);
+    const setLocalStorage = (data) => {
+        localStorage.setItem('moodryUser', JSON.stringify(data));
+        setUser(data)
+    }
 
+    const handleChange = e => {
+        console.log(e.currentTarget);
+        const attName = e.currentTarget.name;
+        const value = e.currentTarget.value;
+        setFormValues({...formValues, [attName]: value})
+    }
+
+    const handleLogin = () => {
+        if (formValues.email && formValues.password){
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formValues)
+            };
+            try {
+            fetch(`${api_url}api/auth/signin`, requestOptions)
+                .then(response => response.json())
+                .then(res => {
+                    res.id ? setLocalStorage(res) : setMessage(res.message)
+                })
+            }catch (err) {
+                setMessage(err.message)
+            }
+        }
+        else {
+            setMessage("One or more values is missing, please fill in all values and try again.")
+        }
+    }
+    
     if (user) {
         return <Navigate to="/" replace />;
     }
+    
 
   return (
     <main>
         <div className="form-container">
             <h1>Sign In</h1>
         <TextField
-        onChange={onEmailChange}
-        value={email}
-        label={"Enter Email"} 
+        onChange={handleChange}
+        value={formValues.email}
+        label={"Enter Email"}
+        name="email" 
         />
         <TextField
-            error={error}
-            onChange={onPasswordChange}
+            onChange={handleChange}
             type='password'
-            value={password}
+            value={formValues.password}
             label={"Enter Password"} 
+            name="password"
         />
             <Button variant="contained" onClick={handleLogin}> Sign In</Button>
        <div> Don't have an account? <Link to="/signup">Sign Up</Link></div>
+       <div className="error-message">{message}</div>
         </div>
     </main>
   );

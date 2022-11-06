@@ -24,6 +24,8 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 
 const logger = new Logger('foo');
 
+const api_url = 'http://localhost:8080/api/test/all'
+
 function Dashboard({user}) {
     const [error, setError] = useState(null);
     const [moods, setMoods] = useState([]);
@@ -31,6 +33,7 @@ function Dashboard({user}) {
     const [moodValue, setMoodValue] = useState(null)
     const [noteValue, setNoteValue] = useState('')
     const [loading, setLoading] = useState(true);
+    const [test, setTest] = useState(null);
 
     const updateMoodData = e => {
         if (e.target.name === 'note'){

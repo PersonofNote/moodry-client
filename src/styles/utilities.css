@@ -1,0 +1,18 @@
+.flex {
+    display: flex;
+}
+
+.flex-switch {
+    display: flex;
+    flex-direction: column;
+}
+
+.align-center {
+    align-items: center;
+}
+
+@media screen and (min-width: 735px) {
+    .flex-switch {
+        flex-direction: row;
+    }
+  }

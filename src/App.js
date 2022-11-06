@@ -30,14 +30,6 @@ function App() {
   const [error, setError] = useState(null);
   const [showCodeField, setShowCodeField] = useState(false);
 
-
-
-  const handleLogin = () => {
-    console.log("SETTING USER")
-    setUser({ id: '1', name: 'jessie', role: 'admin' });
-  }
-  const handleLogout = () => setUser(null);
-
   const renderError = (error) => {
     return Object.keys(error).map((key, index) => {
       return (
@@ -52,6 +44,10 @@ function App() {
     })
   }
 
+  useEffect(() => {
+    setUser(localStorage.getItem('moodryUser'), console.log(user?.username));
+  },[user])
+
   // TODO: render conditional routing based on logged in or not
 
   return (
@@ -62,7 +58,7 @@ function App() {
       <Routes>
       <Route path="/" element={<Dashboard user={user}/>} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/signin" element={<Signin handleLogin={handleLogin} user={user} />} />
+      <Route path="/signin" element={<Signin setUser={setUser} user={user} />} />
       <Route path="/dashboard" element={<Dashboard user={user}/>} />
       <Route path="/analytics" element={<Analytics />} />
       <Route path="*" element={<ErrorPage />} />
