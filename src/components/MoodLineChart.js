@@ -12,12 +12,6 @@ const MoodLineChart = ({moodData, timeFrame="day", loading}) => {
   const dateFormatter = date => {
     return format(new Date(date), "dd/MMM h:m aaaa");
   };
-
-  for (let x in data) {
-    console.log(data[x])
-    
-  }
-
   
   const getTicks = (startDate, endDate, num) => {
     const diffDays = differenceInCalendarDays(parseISO(endDate), parseISO(startDate));

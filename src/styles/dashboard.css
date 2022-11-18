@@ -10,9 +10,9 @@ main {
 .ad {
     width: 100%;
     padding: 0;
-    border-left: 1px dashed slategray;
     min-height: 100px;
-    padding: 2rem;
+    padding-top: 2rem;
+    text-align: center;
 }
 
 .form-container {
@@ -26,6 +26,7 @@ main {
 
 .moods-list {
     list-style: none;
+    padding: 12px;
 }
 
 .box-container-ams {
@@ -51,6 +52,7 @@ main {
     width: 72px;
     height: 72px;
     margin-bottom: 4px;
+    filter: saturation(0.4);
 
 }
 
@@ -61,9 +63,8 @@ main {
 }
 
 .icon-button-ams.button-active {
-    background-color: ghostwhite;
     border: 3px dotted gray;
-    margin-bottom: 4px;
+    margin-bottom: 1px;
 }
 
 
@@ -92,6 +93,8 @@ main {
     .ad {
         max-width: 20%;
         padding-top: 250px;
+        border-left: 1px dashed slategray;
+        padding: 2rem;
     }
 
     .chart-container {

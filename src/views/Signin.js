@@ -43,6 +43,7 @@ const Signin = ({user, setUser}) => {
             fetch(`${api_url}api/auth/signin`, requestOptions)
                 .then(response => response.json())
                 .then(res => {
+                    console.log(res)
                     res.id ? setLocalStorage(res) : setMessage(res.message)
                 })
             }catch (err) {

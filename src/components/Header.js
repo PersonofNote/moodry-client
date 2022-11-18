@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import MoodryLogo from './logo.svg'
 import '../App.css'
 import '../styles/utilities.css'
+import '../styles/header.css'
 
 // Material components
 import TextField from "@mui/material/TextField";
@@ -18,8 +19,11 @@ const Header = ({user, setUser}) => {
         <header>
            <nav>
             <div className="flex align-center">
-                <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" /> 
-                <Link to="/dashboard">Dashboard</Link>
+                <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" />
+                {/*
+                <Link className="header-link" to="/dashboard">Dashboard</Link>
+                <Link className="header-link" to="/profile">Profile</Link>
+                */}
             </div>
                 {user && <Button onClick={handleLogout}>Sign Out</Button>}
             </nav>

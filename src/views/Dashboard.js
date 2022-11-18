@@ -4,10 +4,6 @@ import { format } from 'date-fns'
 import { Logger } from 'aws-amplify';
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
 
-// API functions
-import { API } from 'aws-amplify';
-import { listMoods } from '../graphql/queries';
-import * as mutations from '../graphql/mutations';
 
 import '../styles/dashboard.css';
 
@@ -17,152 +13,182 @@ import LineChartModule from '../components/ChartModule'
 
 // MUI
 import { Button, Box, TextField } from '@mui/material';
-import SvgIcon from '@mui/material/SvgIcon';
-import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt';
-import SentimentNeutralIcon from '@mui/icons-material/SentimentNeutral';
-import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
 
 const logger = new Logger('foo');
 
-const api_url = 'http://localhost:8080/api/test/all'
+const api_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
 
 function Dashboard({user}) {
-    const [error, setError] = useState(null);
+
+    const initialMoodState = {
+        value: null,
+        note: null,
+        user_id: user?.id
+    }
+    
     const [moods, setMoods] = useState([]);
     const [showMoods, setShowMoods] = useState(false)
-    const [moodValue, setMoodValue] = useState(null)
-    const [noteValue, setNoteValue] = useState('')
+    const [moodValue, setMoodValue] = useState(initialMoodState)
     const [loading, setLoading] = useState(true);
-    const [test, setTest] = useState(null);
 
     const updateMoodData = e => {
         if (e.target.name === 'note'){
-            setNoteValue(e.target.value)
+            setMoodValue({...moodValue, note: e.target.value})
         }else{
-            setMoodValue(e.currentTarget.value)
+            setMoodValue({...moodValue, value: e.currentTarget.value})
         }
     }
 
     const fetchMoods = useCallback(async () => {
+        console.log("API URL")
+        console.log(api_url)
         try {
-        // This seems like a glaring weak spot to have on the client side, what's up with this
-        let filter = {
-            usersID: {
-                eq: user.username
-            }
-        };
-        const apiData = await API.graphql({ query: listMoods, variables: {filter : filter} });
-        const sorted = apiData.data.listMoods.items.sort((a, b) => (Date.parse(b.createdAt) > Date.parse(a.createdAt)) ? 1 : -1)
-        setMoods(sorted)
-        setLoading(false)
-    }   
-    catch (error) {
-        console.log('error', error);
-        setError(error.errors[0].message)
-    }   
+            fetch(`${api_url}api/moods?${new URLSearchParams({
+                user_id: user?.id
+            })}`)
+            .then(response => response.json())
+            .then(res => {
+                console.log(res)
+                setMoods(res.message)
+            })
+            setLoading(false)
+        }   
+        catch (error) {
+            console.log('error', error);
+        }
     }, [])
     
-    const handleMoodClick = async e => {
+    const handleSubmit = async e => {
         setLoading(true)
-        try { 
-            const moodData = {value: moodValue, note: noteValue, usersID: user.username }
-            const newMood = await addMood(moodData)
-            logger.debug(`User ${user.username} posted data`)
-            // Todo: if possible, reduce a fetch here by faking it. The spread operator should be enough
-            // to visually add, but it's not working for some reason.
-            fetchMoods()
+        try {   
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(moodValue)
+            };
+            fetch(`${api_url}api/moods`, requestOptions)
+            .then(response => response.json())
+            .then(res => {
+                console.log(res)
+                setMoodValue(initialMoodState, fetchMoods())
+            })
             setLoading(false)
         }
         catch (error) {
             console.log('error', error);
-            setError(errorMessages[error.name])
         }
     }
 
         
     const handleAddNote = async e => {
-        // TODO: add blur/focus to keep the note input to just its own textbox
-        if (noteValue.length > 0) {
-            try { 
-                const moodData = {
-                    id: e.currentTarget.value,
-                    note: noteValue
-                }
-                const newMood = await addNote(moodData)
-                setNoteValue("")
-                fetchMoods()
-            }catch (error) {
-                console.log('error', error);
-                setError(errorMessages[error.name])
-            }
-        }else{
-            setError("Note cannot be empty")
+        setLoading(true)
+        const noteValue = {
+            id: e.currentTarget.value,
+            note: moodValue?.note
+        }
+        try {   
+            const requestOptions = {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(noteValue)
+            };
+            logger.debug(`User ${user.username} posted data`)
+            fetch(`${api_url}api/moods`, requestOptions)
+            .then(response => response.json())
+            .then(res => {
+                console.log(res)
+                setMoodValue(initialMoodState, fetchMoods())
+            })
+            setLoading(false)
+        }
+        catch (error) {
+            console.log('error', error);
         }
     }
 
 
     const handleDeleteMood = async e => {
         try {
-            const dataArr = e.currentTarget.value.split(",")
             const moodData = {
-                id: dataArr[0],
+                "id": e.currentTarget.value,
             }
-            deleteMood(moodData)
-            // Visually remove from list to reduce fetching
-            const newMoodList = moods.filter(m => m.id !== moodData.id);
-            setMoods(newMoodList);
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(moodData)
+            };
+            
+            fetch(`${api_url}api/moods`, requestOptions)
+            .then(response => response.json())
+            .then(res => {
+                fetchMoods();
+            })            
             }
             catch (error) {
-                console.log('error', error);
-                setError(errorMessages[error.name])
+                console.log('error', error);     
             }
-    }
+        }
 
     useEffect(() => {
         fetchMoods();
       },[]);
+
   
     // Break out into new component or nah?
     const renderMood = (moodsList) => {
-        // MOOD KEYS: {id, value, note, usersID, createdAt, updatedAt}
         const moodsArray = Object.keys(moodsList).map((key, index) => {
-            const { id, value, note, createdAt } = moodsList[key];
+            const { _id, value, note, createdAt } = moodsList[key];
             const Icon = moodIconMapping[value]
             const date = createdAt ? format(new Date(createdAt), 'MM/dd h:m aaaa') : "Test";
             return <Box key={`${index}`} className="box-container-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}>
-                <Box sx={{width: `20%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `35px`}} className='box-item-ams'> {moodTextMapping[value]}</Box> 
-                <Box sx={{width: `45%`}} className='box-item-ams'>
-                {note ? <div style={{paddingLeft: `12px`}}>{note}</div> : <>
-                <TextField
-                label={"Enter Note (Optional)"}
-                size="small"
-                name="note"
-                onChange={updateMoodData}
-                /> 
-            <Button value={id} variant="contained" onClick={handleAddNote}>Add</Button>
-            </>} 
-            </Box> <Box className='box-item-ams'> <Button onClick={handleDeleteMood} value={[id]}>Delete</Button> </Box></Box>
+                <Box sx={{width: `20%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `22px`}} className='box-item-ams'>
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="50" fill={moodColors[value]}/>
+                    </svg> 
+                </Box> 
+                <Box sx={{width: `55%`}} className='box-item-ams'>
+                    {note ? <div style={{paddingLeft: `1rem`}}>{note}</div> : 
+                    <div style={{display: 'flex', paddingLeft: `8px`}}>
+                    <TextField
+                        label={"Enter Note (Optional)"}
+                        size="small"
+                        name="note"
+                        onChange={updateMoodData}
+                    /> 
+                    <Button value={_id} variant="contained" onClick={handleAddNote}><AddIcon /></Button>
+                    </div>
+                    } 
+                    </Box> 
+                    <Box className='box-item-ams'> 
+                        <Button onClick={handleDeleteMood} value={_id}>
+                            <DeleteIcon />
+                        </Button> 
+                    </Box>
+                </Box>
         });
         return moodsArray;
     }
 
     const moodsList = renderMood(moods);
-    
-    const addMood = async(moodData) => await API.graphql({ query: mutations.createMoods, variables: {input: moodData}});
-    const deleteMood = async(moodData) => await API.graphql({ query: mutations.deleteMoods, variables: {input: moodData}});
-    const addNote = async(moodData) => await API.graphql({query: mutations.updateMoods, variables: {input: moodData}})
+
 
     if (!user) {
         return <Navigate to="/signin" replace />;
       }
-    /*
+    
     return (
     <main>
         <div className="content">
             {!loading &&
-                <MoodEntryModule user={user} handleMoodClick={handleMoodClick} handleChange={updateMoodData} noteValue={noteValue} moodValue={moodValue}/>
+                <MoodEntryModule user={user} handleSubmit={handleSubmit} handleChange={updateMoodData} moodValue={moodValue}/>
             }
+        {moodsList.length > 0 ? (
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
+        ) :
+            <p>There's nothing here - add some data to see charts</p>
+        }
         {showMoods &&(
         <>
         <div className="moods-list">
@@ -175,17 +201,12 @@ function Dashboard({user}) {
         <LineChartModule type="line" data={moods} loading={loading}/>
         )
         }
-        {error && (
-            <div>{error}</div>
-        )}
         </div>
         <div className="ad">Ad goes here for non-premium users</div>
     </main>
   );
-  */
- return (
-    <h1> DASHBOARD</h1>
- )
+  
+
 }
 
 export default Dashboard;

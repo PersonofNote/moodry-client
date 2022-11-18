@@ -11,8 +11,12 @@
     align-items: center;
 }
 
+.text-center {
+    text-align: center;
+}
+
 @media screen and (min-width: 735px) {
     .flex-switch {
         flex-direction: row;
     }
-  }
+}

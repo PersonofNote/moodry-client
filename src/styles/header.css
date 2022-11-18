@@ -1,0 +1,9 @@
+.header-link {
+    font-weight: bold;
+    text-decoration: none;
+    padding-left: 4px;
+}
+
+.header-link.active {
+    border-bottom: 1px solid black;
+}
