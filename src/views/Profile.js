@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 // MUI
 import { Button, Box, TextField } from '@mui/material';
 
-const api_url = 'http://localhost:8080/'
+const api_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
 
 const Profile = ({user}) => {
   const [editPasswordMode, setEditPasswordMode] = useState (false);

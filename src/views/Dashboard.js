@@ -42,8 +42,6 @@ function Dashboard({user}) {
     }
 
     const fetchMoods = useCallback(async () => {
-        console.log("API URL")
-        console.log(api_url)
         try {
             fetch(`${api_url}api/moods?${new URLSearchParams({
                 user_id: user?.id

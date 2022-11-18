@@ -5,12 +5,10 @@
 ### The story
 My mother requested a data-oriented mood tracker. She wants to be able to enter a value from [bad, neutral, good] as well as an optional note, and to be able to see this data visualized in a variety of ways. The goal is to identify trends and be able to predict and prepare for bad times, as well as to take advantage of good times!
 
-This project is a simple React app with Amplify as a back end. It is currently in active development.
+This project is currently in active development.
 
 ### The Tech
-As of the time of this writing, the app is a React PWA with a GraphQL API to access Amplify's DynamoDB. 
-
-It is likely that as the data processing and visualization gets more complex, I will need to add an API layer between the client and server, to fetch and process data before sending to the frontend. This will probably be done through flask or express.
+At the time of this writing, this is a MERN-stack app.
 
 
 ## Get Started
@@ -29,7 +27,4 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 
 ### `npm run build`
 
-### Deployment
-
-Create an amplify project, and run "amplify push"
 

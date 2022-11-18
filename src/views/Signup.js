@@ -12,7 +12,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
-const api_url = "http://localhost:8080/"
+const api_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
 
 const Signup = ({setUser}) => {
     const [formValues, setFormValues] = useState({
