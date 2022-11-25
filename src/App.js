@@ -32,7 +32,16 @@ function App() {
   const [error, setError] = useState(null);
   const [showCodeField, setShowCodeField] = useState(false);
 
-
+useEffect(() => {
+  fetch("https://onh73rsuetfgswo6rvlcdxg6ri0zezss.lambda-url.us-west-2.on.aws/")
+  .then((response) => response.json())
+  .then((result) => {
+    console.log('Success:', result);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+}, [])
 
 // TODO: Is this the best way to do this?
   useEffect(() => {

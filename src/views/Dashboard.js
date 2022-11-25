@@ -18,7 +18,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 const logger = new Logger('foo');
 
-const api_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
+const api_url = process.env.NODE_ENV === 'development' ? 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
 
 function Dashboard({user}) {
 
