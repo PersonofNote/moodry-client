@@ -10,6 +10,7 @@ import '../styles/dashboard.css';
 // Components
 import MoodEntryModule from '../components/MoodEntry'
 import LineChartModule from '../components/ChartModule'
+import Loader from '../components/Loader'
 
 // MUI
 import { Button, Box, TextField } from '@mui/material';
@@ -21,7 +22,6 @@ const logger = new Logger('foo');
 const api_url = process.env.NODE_ENV === 'development' ? 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/' : 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/'
 
 function Dashboard({user}) {
-
     const initialMoodState = {
         value: null,
         note: null,
@@ -32,6 +32,7 @@ function Dashboard({user}) {
     const [showMoods, setShowMoods] = useState(false)
     const [moodValue, setMoodValue] = useState(initialMoodState)
     const [loading, setLoading] = useState(true);
+    const [ error, setError] = useState(null);
 
     const updateMoodData = e => {
         if (e.target.name === 'note'){
@@ -42,6 +43,7 @@ function Dashboard({user}) {
     }
 
     const fetchMoods = useCallback(async () => {
+        setLoading(true);
         try {
             fetch(`${api_url}api/moods?${new URLSearchParams({
                 user_id: user?.id
@@ -70,11 +72,13 @@ function Dashboard({user}) {
             .then(response => response.json())
             .then(res => {
                 console.log(res)
+                res.message?.errors && setError(res.message.errors.value.message)
                 setMoodValue(initialMoodState, fetchMoods())
             })
             setLoading(false)
         }
         catch (error) {
+            setError(error)
             console.log('error', error);
         }
     }
@@ -155,12 +159,12 @@ function Dashboard({user}) {
                         name="note"
                         onChange={updateMoodData}
                     /> 
-                    <Button value={_id} variant="contained" onClick={handleAddNote}><AddIcon /></Button>
+                    <Button value={_id} variant="outlined" onClick={handleAddNote}><AddIcon /></Button>
                     </div>
                     } 
                     </Box> 
                     <Box className='box-item-ams'> 
-                        <Button onClick={handleDeleteMood} value={_id}>
+                        <Button color="primary" variant="contained" onClick={handleDeleteMood} value={_id}>
                             <DeleteIcon />
                         </Button> 
                     </Box>
@@ -176,17 +180,24 @@ function Dashboard({user}) {
         return <Navigate to="/signin" replace />;
       }
     
+    if (loading) {
+        return <Loader />
+    }
+
     return (
     <main>
+        {loading ? <Loader /> : (
         <div className="content">
             {!loading &&
                 <MoodEntryModule user={user} handleSubmit={handleSubmit} handleChange={updateMoodData} moodValue={moodValue}/>
             }
-        {moodsList.length > 0 ? (
+        <div className='error-message'>{error}</div>
+        {moodsList.length > 0 && !loading ? (
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         ) :
             <p>There's nothing here - add some data to see charts</p>
         }
+        {loading && <Loader />}
         {showMoods &&(
         <>
         <div className="moods-list">
@@ -200,6 +211,7 @@ function Dashboard({user}) {
         )
         }
         </div>
+        )}
         <div className="ad">Ad goes here for non-premium users</div>
     </main>
   );

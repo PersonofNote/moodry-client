@@ -1,3 +1,4 @@
+
 .App {
   text-align: center;
 }
@@ -27,6 +28,11 @@
   color: white;
 }
 
+body {
+  min-height: 100vh;
+  /* background-color: #242936 !important; */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -46,7 +52,7 @@ nav {
 .logo-icon {
   height: 32px;
   width: 32px;
-  padding: 8px;
+  margin: 8px;
 }
 
 
@@ -55,8 +61,24 @@ nav {
 }
 
 .error-message {
-  color: red;
+  color: #FF7171;
   text-align: center;
   font-weight: bold;
   padding: 4px;
+}
+
+body {
+  font-family: 'Sen';
+}
+
+button {
+  background-color: #41B4B4;
+  color: white;
+  font-weight: bold;
+}
+
+/* Consider removing MUI entirely */
+.MuiButton-root {
+  color: white !important;
+  font-weight: bold !important;
 }

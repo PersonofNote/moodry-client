@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 // MUI
 import { Button, Box, TextField } from '@mui/material';
 
-const api_url = process.env.NODE_ENV === 'development' ? 'http://localhost:8080/' : 'http://ec2-54-149-184-96.us-west-2.compute.amazonaws.com:8080/'
+const api_url = 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/'
 
 const Profile = ({user}) => {
   const [editPasswordMode, setEditPasswordMode] = useState (false);
@@ -75,8 +75,9 @@ const handleSubmit = () => {
     )}
       <Button onClick={() => setEditPasswordMode(!editPasswordMode)}>{editPasswordMode ? "Cancel" : "Change password"}</Button>
         <hr />
-        <h3>Next up:</h3>
+        <h3>Upcoming Features:</h3>
         <ul>
+          <li>Password reset</li>
           <li>Email reset (with verification)</li>
           <li>Username change</li>
           <li>Subscription management/payments</li>

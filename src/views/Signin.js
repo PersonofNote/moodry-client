@@ -10,6 +10,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
+import Loader from '../components/Loader'
+
 
 const api_url = process.env.NODE_ENV === 'development' ? 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/' : 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/'
 
@@ -18,7 +20,7 @@ const Signin = ({user, setUser}) => {
         email: null,
         password: null
     })
-
+    const [loading, setLoading] = useState(null);
     const [message, setMessage] = useState(null)
 
     const setLocalStorage = (data) => {
@@ -33,6 +35,7 @@ const Signin = ({user, setUser}) => {
     }
 
     const handleLogin = () => {
+        setLoading(true);
         if (formValues.email && formValues.password){
             const requestOptions = {
                 method: 'POST',
@@ -43,8 +46,8 @@ const Signin = ({user, setUser}) => {
             fetch(`${api_url}api/auth/signin`, requestOptions)
                 .then(response => response.json())
                 .then(res => {
-                    console.log(res)
                     res.id ? setLocalStorage(res) : setMessage(res.message)
+                    setLoading(false);
                 })
             }catch (err) {
                 setMessage(err.message)
@@ -64,21 +67,25 @@ const Signin = ({user, setUser}) => {
     <main>
         <div className="form-container">
             <h1>Sign In</h1>
-        <TextField
-        onChange={handleChange}
-        value={formValues.email}
-        label={"Enter Email"}
-        name="email" 
-        />
-        <TextField
-            onChange={handleChange}
-            type='password'
-            value={formValues.password}
-            label={"Enter Password"} 
-            name="password"
-        />
-            <Button variant="contained" onClick={handleLogin}> Sign In</Button>
-       <div> Don't have an account? <Link to="/signup">Sign Up</Link></div>
+            {loading ? <Loader /> : (
+                <>
+                <TextField
+                onChange={handleChange}
+                value={formValues.email}
+                label={"Enter Email"}
+                name="email" 
+                />
+                <TextField
+                    onChange={handleChange}
+                    type='password'
+                    value={formValues.password}
+                    label={"Enter Password"} 
+                    name="password"
+                />
+                    <Button variant="contained" onClick={handleLogin}> Sign In</Button>
+            <div> Don't have an account? <Link to="/signup">Sign Up</Link></div>
+            </>
+            )}
        <div className="error-message">{message}</div>
         </div>
     </main>

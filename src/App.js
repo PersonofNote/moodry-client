@@ -9,7 +9,9 @@ import {
   Link
 } from "react-router-dom";
 
-// Material components
+// Material components and theme
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 import {  Box } from '@mui/material';
@@ -26,7 +28,35 @@ import ErrorPage from './views/ErrorPage'
 import Header from './components/Header'
 import Loader from './components/Loader'
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#242936',
+      secondary: '#712B75',
+      error: '#000',
+      contrastText: '#fff',
+      dark: '#242936',
+    },
+    neutral: {
+      main: '#41B4B4',
+      contrastText: '#fff',
+    },
+    custom: {
+      main: '#1E5F74',
+      dark: '712B75'
+    }
+  },
+});
+
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light'
+  }
+})
+
 function App() {
+  const [theme, setTheme] = useState(darkTheme);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -53,7 +83,9 @@ useEffect(() => {
   }
 
   return (
-    <Box sx={{maxWidth: '1200px', margin: 'auto'}}>
+    <ThemeProvider theme={theme}>
+    <CssBaseline />
+    <Box>
       <BrowserRouter>
       <div>
         {user &&  <Header user={user} setUser={setUser} />}
@@ -69,6 +101,7 @@ useEffect(() => {
       </div>
      </BrowserRouter>
   </Box>
+  </ThemeProvider>
   );
 }
 

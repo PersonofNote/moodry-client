@@ -5,7 +5,6 @@ import '../styles/utilities.css'
 import '../styles/header.css'
 
 // Material components
-import TextField from "@mui/material/TextField";
 import Button from '@mui/material/Button';
 
 const Header = ({user, setUser}) => {
@@ -20,10 +19,8 @@ const Header = ({user, setUser}) => {
            <nav>
             <div className="flex align-center">
                 <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" />
-                {/*
                 <Link className="header-link" to="/dashboard">Dashboard</Link>
                 <Link className="header-link" to="/profile">Profile</Link>
-                */}
             </div>
                 {user && <Button onClick={handleLogout}>Sign Out</Button>}
             </nav>
