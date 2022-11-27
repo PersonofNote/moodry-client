@@ -145,8 +145,8 @@ function Dashboard({user}) {
             const Icon = moodIconMapping[value]
             const date = createdAt ? format(new Date(createdAt), 'MM/dd h:m aaaa') : "Test";
             return <Box key={`${index}`} className="box-container-ams" sx={{display: `flex`, borderBottom: `1px solid gray`}} value={`moods-${key}`}>
-                <Box sx={{width: `20%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`, width: `22px`}} className='box-item-ams'>
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <Box sx={{width: `20%`}}>{date}</Box> <Box sx={{color: `${moodColors[value]}`}} className='box-item-ams'>
+                    <svg width='32px' viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="50" cy="50" r="50" fill={moodColors[value]}/>
                     </svg> 
                 </Box> 
