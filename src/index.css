@@ -17,6 +17,7 @@ code {
 main {
   width: 100vw;
   max-width: 1200px;
+  padding: 12px;
   margin: auto;
 }
 

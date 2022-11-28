@@ -54,12 +54,12 @@ main {
 
 .icon-button-ams:focus {
     background-color: ghostwhite;
-    border: 3px dotted gray;
+    border: 3px dotted white;
     margin-bottom: 4px;
 }
 
 .icon-button-ams.button-active {
-    border: 3px dotted gray;
+    border: 3px dotted white;
     margin-bottom: 1px;
 }
 
@@ -75,6 +75,13 @@ main {
     font-size: 22px;
 }
 
+.module-card-ams {
+    width: 95%;
+    padding: 12px;
+    margin: auto;
+    border-radius: 24px;
+    background-color: #1982C4;
+}
 
 @media screen and (min-width: 735px) {
     main {
