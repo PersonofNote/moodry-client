@@ -44,6 +44,7 @@ function Dashboard({user}) {
 
     const fetchMoods = useCallback(async () => {
         setLoading(true);
+        console.log(loading)
         try {
             fetch(`${api_url}api/moods?${new URLSearchParams({
                 user_id: user?.id
@@ -51,9 +52,8 @@ function Dashboard({user}) {
             .then(response => response.json())
             .then(res => {
                 console.log(res)
-                setMoods(res.message)
+                setMoods(res.message, setLoading(false))
             })
-            setLoading(false)
         }   
         catch (error) {
             console.log('error', error);
@@ -180,24 +180,16 @@ function Dashboard({user}) {
         return <Navigate to="/signin" replace />;
       }
     
-    if (loading) {
-        return <Loader />
-    }
-
     return (
     <main>
-        {loading ? <Loader /> : (
         <div className="content">
-            {!loading &&
-                <MoodEntryModule user={user} handleSubmit={handleSubmit} handleChange={updateMoodData} moodValue={moodValue}/>
-            }
+            <MoodEntryModule user={user} handleSubmit={handleSubmit} handleChange={updateMoodData} moodValue={moodValue} loading={loading}/>
         <div className='error-message'>{error}</div>
         {moodsList.length > 0 && !loading ? (
         <Button onClick={() => setShowMoods(!showMoods)}>{showMoods ? "Hide mood list" : "Show mood list"}</Button>
         ) :
-            <p>There's nothing here - add some data to see charts</p>
+           loading ? <Loader /> : <p>There's nothing here - add some data to see charts</p> 
         }
-        {loading && <Loader />}
         {showMoods &&(
         <>
         <div className="moods-list">
@@ -211,7 +203,6 @@ function Dashboard({user}) {
         )
         }
         </div>
-        )}
         <div className="ad">Ad goes here for non-premium users</div>
     </main>
   );

@@ -67,18 +67,16 @@ nav {
   padding: 4px;
 }
 
-body {
-  font-family: 'Sen';
-}
-
 button {
   background-color: #41B4B4;
   color: white;
   font-weight: bold;
+  font-family: 'Sen', 'Roboto', 'Ubuntu';
 }
 
 /* Consider removing MUI entirely */
 .MuiButton-root {
   color: white !important;
   font-weight: bold !important;
+  font-family: 'Sen', 'Roboto', 'Ubuntu' !important;
 }

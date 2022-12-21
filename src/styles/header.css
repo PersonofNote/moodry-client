@@ -1,10 +1,10 @@
 .header-link {
     font-weight: bold;
     text-decoration: none;
-    padding-left: 4px;
+    margin-left: 12px;
     color: white;
 }
 
 .header-link.active {
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #1982C4;
 }

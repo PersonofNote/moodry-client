@@ -26,8 +26,8 @@ import ErrorPage from './views/ErrorPage'
 
 // Layout components
 import Header from './components/Header'
-import Loader from './components/Loader'
 
+// TODO: improve this a LOT
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
@@ -43,8 +43,8 @@ const darkTheme = createTheme({
       contrastText: '#fff',
     },
     custom: {
-      main: '#1E5F74',
-      dark: '712B75'
+      main: '#242936',
+      dark: '#712B75'
     }
   },
 });
@@ -58,7 +58,6 @@ const lightTheme = createTheme({
 function App() {
   const [theme, setTheme] = useState(darkTheme);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showCodeField, setShowCodeField] = useState(false);
 
@@ -75,12 +74,8 @@ useEffect(() => {
 
 // TODO: Is this the best way to do this?
   useEffect(() => {
-    setUser(JSON.parse(localStorage.getItem('moodryUser')), setLoading(false));
+    setUser(JSON.parse(localStorage.getItem('moodryUser')));
   },[])
-
-  if (loading) {
-    return <Loader />
-  }
 
   return (
     <ThemeProvider theme={theme}>

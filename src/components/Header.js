@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import MoodryLogo from './logo.svg'
 import '../App.css'
 import '../styles/utilities.css'
@@ -19,8 +19,8 @@ const Header = ({user, setUser}) => {
            <nav>
             <div className="flex align-center">
                 <img className='logo-icon' src={MoodryLogo} alt="Moodry Logo" />
-                <Link className="header-link" to="/dashboard">Dashboard</Link>
-                <Link className="header-link" to="/profile">Profile</Link>
+                <NavLink className="header-link" to="/dashboard">Dashboard</NavLink>
+                <NavLink className="header-link" to="/profile">Profile</NavLink>
             </div>
                 {user && <Button onClick={handleLogout}>Sign Out</Button>}
             </nav>

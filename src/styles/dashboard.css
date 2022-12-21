@@ -52,12 +52,6 @@ main {
 
 }
 
-.icon-button-ams:focus {
-    background-color: ghostwhite;
-    border: 3px dotted white;
-    margin-bottom: 4px;
-}
-
 .icon-button-ams.button-active {
     border: 3px dotted white;
     margin-bottom: 1px;
