@@ -8,9 +8,10 @@ import { Routes, Route, Link, Navigate } from 'react-router-dom';
 import '../styles/dashboard.css';
 
 // Components
-import MoodEntryModule from '../components/MoodEntry'
-import LineChartModule from '../components/ChartModule'
-import Loader from '../components/Loader'
+import MoodEntryModule from '../components/MoodEntry';
+import Loader from '../components/Loader';
+import D3LineChart from '../components/D3LineChart';
+import DateFilters from '../components/DateFilters';
 
 // MUI
 import { Button, Box, TextField } from '@mui/material';
@@ -21,6 +22,7 @@ const logger = new Logger('foo');
 
 const api_url = process.env.NODE_ENV === 'development' ? 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/' : 'https://xk5wizjyfh.execute-api.us-east-1.amazonaws.com/prod/'
 
+// TODO: Extract moods list to its own page so it's not tied to the moods data
 function Dashboard({user}) {
     const initialMoodState = {
         value: null,
@@ -29,6 +31,11 @@ function Dashboard({user}) {
     }
     
     const [moods, setMoods] = useState([]);
+    const [lineChartData, setLineChartData] = useState([]);
+    const [dateRange, setDateRange] = useState({
+        startDate: null,
+        endDate: null
+    })
     const [showMoods, setShowMoods] = useState(false)
     const [moodValue, setMoodValue] = useState(initialMoodState)
     const [loading, setLoading] = useState(true);
@@ -41,20 +48,17 @@ function Dashboard({user}) {
             setMoodValue({...moodValue, value: e.currentTarget.value})
         }
     }
-
     const fetchMoods = useCallback(async () => {
         setLoading(true);
-        console.log(loading)
         try {
             fetch(`${api_url}api/moods?${new URLSearchParams({
                 user_id: user?.id
             })}`)
             .then(response => response.json())
             .then(res => {
-                console.log(res)
                 setMoods(res.message, setLoading(false))
             })
-        }   
+        }
         catch (error) {
             console.log('error', error);
         }
@@ -71,7 +75,6 @@ function Dashboard({user}) {
             fetch(`${api_url}api/moods`, requestOptions)
             .then(response => response.json())
             .then(res => {
-                console.log(res)
                 res.message?.errors && setError(res.message.errors.value.message)
                 setMoodValue(initialMoodState, fetchMoods())
             })
@@ -100,7 +103,6 @@ function Dashboard({user}) {
             fetch(`${api_url}api/moods`, requestOptions)
             .then(response => response.json())
             .then(res => {
-                console.log(res)
                 setMoodValue(initialMoodState, fetchMoods())
             })
             setLoading(false)
@@ -199,11 +201,22 @@ function Dashboard({user}) {
         )}
         <br/>
         {moods && moods != undefined && moods.length > 0 &&(
-        <LineChartModule type="line" data={moods} loading={loading}/>
+            <>
+            <h1> GRAPHS</h1>
+            <div className="line-chart-container">
+                <DateFilters data={moods} setFilteredData={setLineChartData} setDateRange={setDateRange} />
+                <D3LineChart data={lineChartData.length ? lineChartData : moods} dateRange={dateRange ? dateRange : null} />
+            </div>
+            {/*
+                <LineChart1 moodData={moods.slice(12,moods.length)} />
+            */}
+            </>
         )
         }
         </div>
-        <div className="ad">Ad goes here for non-premium users</div>
+        {user?.role !== 'premium' && (
+            <div className="ad">Ad goes here for non-premium users</div>
+        )}
     </main>
   );
   

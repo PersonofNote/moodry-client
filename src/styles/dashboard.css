@@ -77,6 +77,11 @@ main {
     background-color: #1982C4;
 }
 
+.line-chart-container {
+    width: 100%;
+    height: 400px;
+}
+
 @media screen and (min-width: 735px) {
     main {
     flex-direction: row;
