@@ -10,6 +10,7 @@ const getDates = (data) => {
 }
 
 const D3LineChart = ({data, dateRange}) => {
+    console.log(dateRange)
     // TODO: select the ticks based on the time interval (possibly handled up higher)
     // TODO: calculate ticks from the date interval, not the dates themselves (except for 'all'. So like one week/one month, etc)
     const ticks = []
@@ -64,12 +65,14 @@ const D3LineChart = ({data, dateRange}) => {
 
     useEffect(() => {
             if (data && d3Container.current) {
-                const del = d3.select('#line-chart-svg').selectAll('*').remove();
+                
+                d3.select('#line-chart-svg').selectAll('*').remove();
                 
                 const domain = dateRange.startDate != null ? [dateRange.startDate, d3.isoParse(dateRange.endDate)] : d3.extent(getDates(data))
                 const xScale = d3.scaleTime()
                     .domain(domain)
-                    .range([0, width]);
+                    .range([0, width])
+                    .nice();
                 const yScale = d3.scaleLinear()
                 .domain([0, d3.max(data, d => +d.value )])
                 .range([ height, 0 ])

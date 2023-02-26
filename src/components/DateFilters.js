@@ -8,23 +8,24 @@ const now = new Date();
 
 const DateFilters = ({data, setFilteredData, setDateRange}) => {
     const handleClick = e => {
-        if (e.target.value === null) {
+        console.log(e.target.value)
+        console.log(e.target.name)
+        if (!e.target.value) {
+            setFilteredData(data);
             setDateRange({startDate: null, endDate: null})
-            return
         }else{
-        const daysAgo = subDays(now, e.target.value)
-        const filteredData = data.filter(d => { 
-            const date = parseISO(d.createdAt)
-            return isAfter(date, daysAgo) && isBefore(date, now)
-        })
-
-        setDateRange({startDate: daysAgo, endDate: now});
-        setFilteredData(filteredData);
-    }
+            const daysAgo = subDays(now, e.target.value)
+            const filteredData = data.filter(d => { 
+                const date = parseISO(d.createdAt)
+                return isAfter(date, daysAgo) && isBefore(date, now)
+            })
+            setFilteredData(filteredData);
+            setDateRange({startDate: daysAgo, endDate: now});
+        }
     }
     
     const buttonGroup = timeFrames.map((e, index) => (
-        <Button onClick={handleClick} key={index} value={e.val}>{e.name}</Button>
+        <Button onClick={handleClick} name={e.name} key={index} value={e.val}>{e.name}</Button>
     ))
     
     return (
