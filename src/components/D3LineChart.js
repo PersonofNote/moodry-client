@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import * as d3 from 'd3';
 import { moodColors } from '../constants'
 import '../styles/line-chart.css';
+import { useWindowSize } from '../hooks/UseWindowSize';
 
 const parseDate = d3.timeParse("%Y-%m-%dT%H:%M:%S.%LZ");
 
@@ -10,17 +11,17 @@ const getDates = (data) => {
 }
 
 const D3LineChart = ({data, dateRange}) => {
-    console.log(dateRange)
-    // TODO: select the ticks based on the time interval (possibly handled up higher)
-    // TODO: calculate ticks from the date interval, not the dates themselves (except for 'all'. So like one week/one month, etc)
+    const { wHeight, wWidth } = useWindowSize();
     const ticks = []
     const d3Container = useRef(null);
     const now = new Date();
 
     // TODO: convert these to config options
-    const margin = {top: 10, right: 30, bottom: 30, left: 60},
-    width = 800 - margin.left - margin.right,
-    height = 200 - margin.top - margin.bottom;
+    const margin = wWidth < 750 ? {top: 10, right: 30, bottom: 30, left: 30} : {top: 10, right: 30, bottom: 30, left: 60};
+    //width = 800 - margin.left - margin.right,
+    //height = 200 - margin.top - margin.bottom;
+    const width = wWidth - margin.left - margin.right;
+    const height = 400 - margin.top - margin.bottom;
 
     const tooltipContent = (val) => {
         const date = parseDate(val.createdAt)
@@ -65,37 +66,50 @@ const D3LineChart = ({data, dateRange}) => {
 
     useEffect(() => {
             if (data && d3Container.current) {
-                
+                // TODO: right nwo this won't dynamically update. How to recalculate without redrawing everything forever?
+                // Will need to modularize this function quite a bit so we can remove/redraw only the parts we want.
+                // Will probably need to make full-on react components out of some of them.
+                const tickNum = wWidth < 750 ? 3 : 10;
+                const fontSize = wWidth < 750 ? 25 : 10;
+                const dotSize = wWidth < 750 ? 15 : 5;
+
                 d3.select('#line-chart-svg').selectAll('*').remove();
                 
                 const domain = dateRange.startDate != null ? [dateRange.startDate, d3.isoParse(dateRange.endDate)] : d3.extent(getDates(data))
+                
                 const xScale = d3.scaleTime()
                     .domain(domain)
                     .range([0, width])
-                    .nice();
+
                 const yScale = d3.scaleLinear()
-                .domain([0, d3.max(data, d => +d.value )])
+                //.domain([0, d3.max(data, d => +d.value )])
+                .domain([0,3])
                 .range([ height, 0 ])
 
                 // attach chart svg
                 const svg = d3.select(d3Container.current)
                 .append("svg")
                     .attr('id', 'line-chart')
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                    // .attr("width", width + margin.left + margin.right)
+                    // .attr("height", height + margin.top + margin.bottom)
+                    .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
                 .append("g")
                     .attr("transform",
                         "translate(" + margin.left + "," + margin.top + ")");
 
                 var x = d3.scaleTime()
                 .domain(domain)
-                .range([ 0, width ]);
+                .range([ 0, width ])
+
+                const xAxis = d3.axisBottom(xScale).ticks(tickNum)
 
                 svg.append("g")
                 .attr('id', 'x-axis')
                 .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(x));
+                .call(xAxis);
 
+
+               
                 // Add Y axis
                 var y = d3.scaleLinear()
                 .domain([0, d3.max(data, d => +d.value )])
@@ -150,7 +164,7 @@ const D3LineChart = ({data, dateRange}) => {
                 .data(data)
                 .enter()
                 .append("circle")
-                .attr("r", 5)
+                .attr("r", dotSize)
                 .attr("fill", (d) => moodColors[d.value])
                 .attr("cx", (d) => xScale(parseDate(d.createdAt)))
                 .attr("cy", (d) => yScale(d.value))
@@ -158,6 +172,7 @@ const D3LineChart = ({data, dateRange}) => {
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
 
+                d3.selectAll('text').attr('font-size', fontSize);
             }
 
         },[data, d3Container.current])
